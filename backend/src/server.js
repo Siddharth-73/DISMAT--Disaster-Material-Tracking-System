@@ -7,6 +7,7 @@ import materialRoutes from "./routes/materialRoutes.js";
 import requestRoutes from "./routes/requestRoutes.js";
 import dispatchRoutes from "./routes/dispatchRoutes.js";
 import deliveryRoutes from "./routes/deliveryRoutes.js";
+import publicRoutes from "./routes/publicRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -23,6 +24,7 @@ app.use("/api/requests", requestRoutes);
 app.use("/api/materials", materialRoutes);
 app.use("/api/dispatch", dispatchRoutes);
 app.use("/api/delivery", deliveryRoutes);
+app.use("/api/public", publicRoutes);
 
 const PORT = process.env.PORT || 5001;
 
