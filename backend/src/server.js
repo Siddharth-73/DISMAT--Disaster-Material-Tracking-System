@@ -3,6 +3,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import materialRoutes from "./routes/materialRoutes.js";
+import requestRoutes from "./routes/requestRoutes.js";
+import dispatchRoutes from "./routes/dispatchRoutes.js";
+import deliveryRoutes from "./routes/deliveryRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -12,8 +16,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());  
 app.use(express.urlencoded({ extended: true }));
+app.use("/uploads", express.static("uploads"));
 
 app.use("/api/auth", authRoutes);
+app.use("/api/requests", requestRoutes);
+app.use("/api/materials", materialRoutes);
+app.use("/api/dispatch", dispatchRoutes);
+app.use("/api/delivery", deliveryRoutes);
 
 const PORT = process.env.PORT || 5001;
 

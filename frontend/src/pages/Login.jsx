@@ -21,8 +21,7 @@ const Login = () => {
       if (role === "admin") navigate("/admin");
       else if (role === "warehouse") navigate("/warehouse");
       else if (role === "ngo") navigate("/ngo");
-      else if (role === "fieldworker") navigate("/field");
-
+      else if (role === "fieldworker") navigate("/fieldworker");
     } catch (error) {
       alert(error.response?.data?.message || "Login failed");
     }
@@ -33,15 +32,15 @@ const Login = () => {
       <h2>Login</h2>
 
       <form onSubmit={handleLogin}>
-        <input 
-          type="email" 
+        <input
+          type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        <input 
-          type="password" 
+        <input
+          type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
