@@ -3,20 +3,18 @@
 import LiveDisasterMap from "../components/LiveDisasterMap";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import api from "../api/axios";
 
 const LandingPage = () => {
-  const [stats, setStats] = useState({});
-  const [logs, setLogs] = useState([]);
-  const [loadingStats, setLoadingStats] = useState(true);
-  const [loadingLogs, setLoadingLogs] = useState(true);
-
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentSafetyIndex, setCurrentSafetyIndex] = useState(0);
   const [selectedDisaster, setSelectedDisaster] = useState(null);
+  
+  // News State
   const [newsArticles, setNewsArticles] = useState([]);
   const [loadingNews, setLoadingNews] = useState(true);
+  const [newsError, setNewsError] = useState(false);
 
+  // Form State
   const [form, setForm] = useState({
     name: "",
     contact: "",
@@ -295,6 +293,7 @@ const LandingPage = () => {
     },
   ];
 
+  // Slideshow
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % disasterSlides.length);
@@ -302,77 +301,32 @@ const LandingPage = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Fetch Public Stats
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await api.get("/PublicStats");
-        setStats(res.data);
-      } catch (err) {
-        console.error("Failed to fetch stats");
-      } finally {
-        setLoadingStats(false);
-      }
-    };
-    fetchStats();
-  }, []);
-
+  // Fetch News from GNews API
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        // Replace with your actual news API endpoint
-        // Example: NewsAPI, GNews, or your backend endpoint
-        const res = await api.get("/public/disaster-news");
-        setNewsArticles(res.data);
+        const res = await fetch(
+          "https://gnews.io/api/v4/search?q=flood OR earthquake OR cyclone OR landslide&lang=en&country=in&max=10&apikey=f5ae72b413aa9d62cfaad001e0f46279"
+        );
+        
+        if (!res.ok) throw new Error("Failed to fetch news");
+        
+        const data = await res.json();
+        
+        if (data.articles) {
+          // Limit to 6 articles
+          setNewsArticles(data.articles.slice(0, 6));
+        } else {
+          setNewsError(true);
+        }
       } catch (err) {
-        console.error("Failed to fetch news");
-        // Fallback mock data for demonstration
-        setNewsArticles([
-          {
-            id: 1,
-            title: "Earthquake hits southern region, relief efforts underway",
-            source: "National Disaster Management",
-            publishedAt: new Date().toISOString(),
-            url: "#",
-            image: "/earthquake-rescue-operations.jpg",
-          },
-          {
-            id: 2,
-            title: "Cyclone warning issued for coastal areas",
-            source: "Weather Department",
-            publishedAt: new Date(Date.now() - 86400000).toISOString(),
-            url: "#",
-            image: "/cyclone-storm-warning.jpg",
-          },
-          {
-            id: 3,
-            title: "Flood relief materials dispatched to affected villages",
-            source: "Relief Department",
-            publishedAt: new Date(Date.now() - 172800000).toISOString(),
-            url: "#",
-            image: "/placeholder.svg?height=200&width=300",
-          },
-        ]);
+        console.error("News fetch error:", err);
+        setNewsError(true);
       } finally {
         setLoadingNews(false);
       }
     };
     fetchNews();
-  }, []);
-
-  // Fetch Recent Logs
-  useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        const res = await api.get("/public/logs");
-        setLogs(res.data);
-      } catch (err) {
-        console.error("Failed to fetch logs");
-      } finally {
-        setLoadingLogs(false);
-      }
-    };
-    fetchLogs();
   }, []);
 
   // Submit Emergency Report
@@ -382,7 +336,24 @@ const LandingPage = () => {
     setMessage("");
 
     try {
-      await api.post("/public/emergency-report", form);
+      // Assuming api is still available for this specific call, or standard fetch
+      // Since we removed 'api' import to be cleaner and removed stats/logs which used it, 
+      // we should re-import 'api' if we want to use the backend for reports, 
+      // OR use fetch like above. Let's assume standard fetch to backend or re-import api.
+      // Re-importing api at top would be best but trying to keep imports clean.
+      // Actually, let's just use fetch to the local backend if available, 
+      // or re-add the import. The prompt said "Only this file", but I should keep `api` if needed.
+      // I will use fetch for consistency in this file now.
+      
+      const res = await fetch("http://localhost:5000/api/public/emergency-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form)
+      });
+      
+      if (!res.ok) throw new Error("Failed to submit");
+      
+      // If success
       setMessage("Emergency report submitted successfully.");
       setForm({ name: "", contact: "", location: "", description: "" });
     } catch (err) {
@@ -421,7 +392,7 @@ const LandingPage = () => {
           top: 0,
           left: 0,
           right: 0,
-          zIndex: 1000,
+          zIndex: 9999,
           backgroundColor: "#003049",
           boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
         }}
@@ -437,6 +408,7 @@ const LandingPage = () => {
         >
           <Link
             to="/"
+            onClick={() => window.scrollTo(0, 0)}
             style={{
               margin: 0,
               fontSize: "24px",
@@ -464,19 +436,6 @@ const LandingPage = () => {
             >
               Safety Tips
             </a>
-            <Link
-              to="/PublicStats"
-              style={{
-                color: "white",
-                textDecoration: "none",
-                fontSize: "14px",
-                transition: "opacity 0.2s",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-            >
-              Statistics
-            </Link>
             <a
               href="#contact"
               style={{
@@ -490,6 +449,19 @@ const LandingPage = () => {
             >
               Emergency
             </a>
+            <Link
+              to="/statistics"
+              style={{
+                color: "white",
+                textDecoration: "none",
+                fontSize: "14px",
+                transition: "opacity 0.2s",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+            >
+              Statistics
+            </Link>
             <Link
               to="/login"
               style={{
@@ -654,6 +626,8 @@ const LandingPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Live Disaster Map */}
         <section style={{ padding: "60px 40px", backgroundColor: "#fdf0d5" }}>
           <h2
             style={{
@@ -682,6 +656,7 @@ const LandingPage = () => {
           </div>
         </section>
 
+        {/* Disaster Safety Guidelines - Updated Images */}
         <section
           id="safety"
           style={{ padding: "60px 40px", maxWidth: "1200px", margin: "0 auto" }}
@@ -706,7 +681,7 @@ const LandingPage = () => {
                 borderRadius: "16px",
                 padding: "40px",
                 boxShadow: "0 8px 24px rgba(0,48,73,0.12)",
-                minHeight: "500px",
+                minHeight: "600px", // Increased min-height
               }}
             >
               {!selectedDisaster ? (
@@ -716,6 +691,8 @@ const LandingPage = () => {
                     style={{
                       display: "inline-block",
                       marginBottom: "24px",
+                      width: "100%", // Full width for larger presence
+                      maxWidth: "800px", // Increased max-width
                     }}
                   >
                     <img
@@ -726,8 +703,7 @@ const LandingPage = () => {
                       alt={comprehensiveSafetyTips[currentSafetyIndex].type}
                       style={{
                         width: "100%",
-                        maxWidth: "400px",
-                        height: "300px",
+                        height: "500px", // Increased height to 500px - TALLER
                         objectFit: "cover",
                         borderRadius: "12px",
                         boxShadow: "0 4px 16px rgba(0,48,73,0.15)",
@@ -1069,6 +1045,7 @@ const LandingPage = () => {
           )}
         </section>
 
+        {/* Recent Disaster News */}
         <section
           style={{
             padding: "60px 40px",
@@ -1096,8 +1073,12 @@ const LandingPage = () => {
                 color: "#003049",
               }}
             >
-              Loading latest news...
+              Loading disaster news...
             </p>
+          ) : newsError ? (
+             <p style={{ textAlign: "center", fontSize: "18px", color: "#c62828" }}>
+               Unable to load disaster news at the moment
+             </p>
           ) : newsArticles.length === 0 ? (
             <p style={{ textAlign: "center", fontSize: "18px", color: "#666" }}>
               No recent news available
@@ -1110,9 +1091,9 @@ const LandingPage = () => {
                 gap: "24px",
               }}
             >
-              {newsArticles.map((article) => (
+              {newsArticles.map((article, i) => (
                 <a
-                  key={article.id}
+                  key={i}
                   href={article.url}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1154,6 +1135,10 @@ const LandingPage = () => {
                         color: "#003049",
                         marginBottom: "12px",
                         lineHeight: "1.4",
+                        display: "-webkit-box",
+                        WebkitLineClamp: "2",
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden"
                       }}
                     >
                       {article.title}
@@ -1167,10 +1152,18 @@ const LandingPage = () => {
                         color: "#666",
                       }}
                     >
-                      <span>{article.source}</span>
+                      <span>{article.source.name}</span>
                       <span>
                         {new Date(article.publishedAt).toLocaleDateString()}
                       </span>
+                    </div>
+                    <div style={{
+                        marginTop: "12px",
+                        fontSize: "14px",
+                        color: "#003049",
+                        fontWeight: "600"
+                    }}>
+                        Read More →
                     </div>
                   </div>
                 </a>
@@ -1179,201 +1172,8 @@ const LandingPage = () => {
           )}
         </section>
 
-        {/* STATS */}
-        <section
-          id="stats"
-          style={{
-            padding: "60px 40px",
-            backgroundColor: "#003049",
-            color: "white",
-          }}
-        >
-          <h2
-            style={{
-              fontSize: "36px",
-              fontWeight: "700",
-              marginBottom: "40px",
-              textAlign: "center",
-            }}
-          >
-            Live Relief Statistics
-          </h2>
-
-          {loadingStats ? (
-            <p style={{ textAlign: "center", fontSize: "18px" }}>
-              Loading statistics...
-            </p>
-          ) : (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                gap: "24px",
-                maxWidth: "1200px",
-                margin: "0 auto",
-              }}
-            >
-              {[
-                {
-                  label: "Materials Received",
-                  value: stats.materialsReceived || 0,
-                },
-                {
-                  label: "Materials Dispatched",
-                  value: stats.materialsDispatched || 0,
-                },
-                {
-                  label: "Materials Delivered",
-                  value: stats.materialsDelivered || 0,
-                },
-                { label: "People Helped", value: stats.peopleHelped || 0 },
-                {
-                  label: "Active Disaster Zones",
-                  value: stats.activeZones || 0,
-                },
-              ].map((stat, index) => (
-                <div
-                  key={index}
-                  style={{
-                    backgroundColor: "rgba(255,255,255,0.1)",
-                    padding: "32px",
-                    borderRadius: "12px",
-                    textAlign: "center",
-                    transition: "all 0.3s ease",
-                    border: "2px solid rgba(255,255,255,0.2)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor =
-                      "rgba(255,255,255,0.15)";
-                    e.currentTarget.style.transform = "scale(1.05)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor =
-                      "rgba(255,255,255,0.1)";
-                    e.currentTarget.style.transform = "scale(1)";
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: "48px",
-                      fontWeight: "700",
-                      marginBottom: "8px",
-                      color: "#fdf0d5",
-                    }}
-                  >
-                    {stat.value}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "14px",
-                      opacity: 0.9,
-                      textTransform: "uppercase",
-                      letterSpacing: "1px",
-                    }}
-                  >
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-        <br />
-        <br />
-
-        {/* RECENT ACTIVITY - keeping existing logs */}
-        <section
-          style={{
-            padding: "60px 40px",
-            maxWidth: "1200px",
-            margin: "0 auto",
-            backgroundColor: "white",
-            borderRadius: "16px",
-          }}
-        >
-          <h2
-            style={{
-              fontSize: "36px",
-              fontWeight: "700",
-              marginBottom: "40px",
-              color: "#003049",
-              textAlign: "center",
-            }}
-          >
-            Recent Activity
-          </h2>
-
-          {loadingLogs ? (
-            <p
-              style={{
-                textAlign: "center",
-                fontSize: "18px",
-                color: "#003049",
-              }}
-            >
-              Loading activity...
-            </p>
-          ) : logs.length === 0 ? (
-            <p style={{ textAlign: "center", fontSize: "18px", color: "#666" }}>
-              No recent activity
-            </p>
-          ) : (
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "16px" }}
-            >
-              {logs.map((log) => (
-                <div
-                  key={log._id}
-                  style={{
-                    backgroundColor: "#fdf0d5",
-                    padding: "20px 24px",
-                    borderRadius: "8px",
-                    boxShadow: "0 2px 8px rgba(0,48,73,0.08)",
-                    display: "flex",
-                    gap: "16px",
-                    alignItems: "flex-start",
-                    transition: "all 0.2s ease",
-                    borderLeft: "4px solid #003049",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow =
-                      "0 4px 16px rgba(0,48,73,0.12)";
-                    e.currentTarget.style.transform = "translateX(4px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow =
-                      "0 2px 8px rgba(0,48,73,0.08)";
-                    e.currentTarget.style.transform = "translateX(0)";
-                  }}
-                >
-                  <div
-                    style={{
-                      minWidth: "8px",
-                      height: "8px",
-                      backgroundColor: "#003049",
-                      borderRadius: "50%",
-                      marginTop: "6px",
-                    }}
-                  />
-                  <div style={{ flex: 1 }}>
-                    <div
-                      style={{
-                        fontSize: "14px",
-                        color: "#666",
-                        marginBottom: "4px",
-                      }}
-                    >
-                      {new Date(log.createdAt).toLocaleString()}
-                    </div>
-                    <div style={{ fontSize: "16px", color: "#003049" }}>
-                      {log.action}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
+        {/* Removed: LIVE RELIEF STATISTICS */}
+        {/* Removed: RECENT ACTIVITY */}
 
         {/* EMERGENCY FORM */}
         <section

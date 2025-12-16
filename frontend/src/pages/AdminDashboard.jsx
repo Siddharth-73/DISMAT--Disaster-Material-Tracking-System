@@ -14,30 +14,71 @@ export default function AdminDashboard() {
     navigate("/login");
   };
 
+  // Dispatch State
+  const [showDispatchModal, setShowDispatchModal] = useState(false);
+  const [dispatchForm, setDispatchForm] = useState({
+    requestId: "",
+    warehouse: "Central",
+    vehicleNo: "",
+    driverName: "",
+    driverPhone: "",
+    destinationRegion: "",
+    items: [],
+    itemSelection: {}, 
+  });
+
+  const handleDispatchSubmit = async (e) => {
+    e.preventDefault();
+    if (!dispatchForm.requestId) return;
+
+    const selectedRequest = data.requests.find((r) => r._id === dispatchForm.requestId);
+    if (!selectedRequest) return;
+
+    try {
+      // Items structure: backend expects [{ materialName, quantity }] which is what existing request.items has.
+      const payload = {
+        requestId: dispatchForm.requestId,
+        items: selectedRequest.items, // Fulfilling all items
+        warehouse: dispatchForm.warehouse,
+        vehicleNo: dispatchForm.vehicleNo,
+        driverName: dispatchForm.driverName,
+        driverPhone: dispatchForm.driverPhone,
+        destinationRegion: selectedRequest.region,
+      };
+
+      await api.post("/dispatch", payload);
+      setMessage({ text: "Dispatch created successfully", type: "success" });
+      setShowDispatchModal(false);
+      fetchDashboardData();
+      setDispatchForm({
+        requestId: "",
+        warehouse: "Central",
+        vehicleNo: "",
+        driverName: "",
+        driverPhone: "",
+        destinationRegion: "",
+        items: [],
+        itemSelection: {},
+      });
+    } catch (err) {
+      setMessage({ text: err.response?.data?.message || "Failed to create dispatch", type: "error" });
+    }
+  };
+
   useEffect(() => {
     fetchDashboardData()
   }, [])
 
   // Derived Stats
   const totalMaterials = data.stock.reduce((sum, item) => sum + (item.totalReceived || 0), 0)
-  const totalDispatched = data.data_stats?.totalDispatched || data.dispatches.length // Alternatively derived from dispatches
-  // Stats derivation from stock/dispatches is limited by what info we have. 
-  // We can count dispatches. 
-  const activeRequests = data.requests.filter(r => r.status === "pending").length
-  const totalPeopleHelped = 0 // Info not available in current API, keep 0 or remove? 
-  // I'll keep it as a placeholder or remove it to be honest. "Remove fake stats" -> I'll remove it or set to "N/A"
+  const totalDispatched = data.dispatches.length 
+  const activeRequests = data.requests.filter(r => r.status?.toLowerCase() === "pending").length
 
   // Activity Feed
-  // Combine Requests (created/approved/rejected), Dispatches (created/updated), Receipts (created)
-  // We have:
-  // - data.requests (createdAt, updatedAt, status)
-  // - data.dispatches (createdAt, updatedAt, status)
-  // - data.receipts (receivedAt, quantity, materialName)
-  
   const activities = [
     ...data.requests.map(r => ({
       type: "request",
-      title: r.status === 'pending' ? "New NGO Request" : `Request ${r.status}`,
+      title: r.status?.toLowerCase() === 'pending' ? "New NGO Request" : `Request ${r.status}`,
       desc: `${r.requester?.name || "NGO"} requested materials for ${r.region}`,
       time: r.updatedAt || r.createdAt,
       color: "bg-orange-100 text-orange-600",
@@ -46,7 +87,7 @@ export default function AdminDashboard() {
     ...data.dispatches.map(d => ({
       type: "dispatch",
       title: "Dispatch Update",
-      desc: `Dispatch to ${d.destinationRegion} is ${d.status}`,
+      desc: `Dispatch to ${d.destinationRegion} is ${d.status === 'completed' ? 'Delivered' : d.status}`,
       time: d.updatedAt || d.createdAt,
       color: "bg-blue-100 text-blue-600",
       iconPath: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
@@ -180,7 +221,7 @@ export default function AdminDashboard() {
               </svg>
             </div>
           </div>
-          <p className="text-3xl font-bold text-[#003049] mb-1">{data.dispatches.length}</p>
+          <p className="text-3xl font-bold text-[#003049] mb-1">{totalDispatched}</p>
           <p className="text-sm text-gray-600">Total Dispatches</p>
         </div>
 
@@ -198,79 +239,71 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* NGO Requests Section */}
+      {/* NGO Requests Management Section (Replaced Pending/Approved separate lists with one unified table for Admin) */}
       <div id="ngo-requests" className="bg-white rounded-xl shadow-md p-6 mb-8 scroll-mt-8">
         <h2 className="text-2xl font-bold text-[#003049] mb-6">NGO Requests Management</h2>
-        <div className="overflow-x-auto">
-            {data.requests.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">No requests found.</p>
-            ) : (
-          <table className="w-full">
-            <thead>
-              <tr className="border-b-2 border-gray-200">
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">NGO Name</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Region</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Requested Items</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Status</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.requests.map((req) => (
-              <tr key={req._id} className="border-b border-gray-100 hover:bg-[#fdf0d5]/30 transition-colors">
-                <td className="py-4 px-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[#003049] rounded-full flex items-center justify-center text-white font-semibold">
-                      {req.requester?.name?.substring(0, 2).toUpperCase() || "NG"}
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">{req.requester?.name || "Unknown"}</p>
-                      <p className="text-xs text-gray-500">{req.requester?.email}</p>
-                    </div>
+        
+        {/* PENDING REQUESTS */}
+        <h3 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Pending Actions</h3>
+        <div className="overflow-x-auto mb-8">
+          {data.requests.filter(r => r.status === 'pending').length === 0 ? (
+               <p className="text-gray-500 text-sm py-2">No pending requests.</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               {data.requests.filter(r => r.status === 'pending').map(req => (
+                  <div key={req._id} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                      <div className="flex justify-between">
+                         <h4 className="font-bold text-[#003049]">{req.requester?.name || "NGO"}</h4>
+                         <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full uppercase font-bold">Pending</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-2">{req.region}</p>
+                      <div className="mb-3 text-sm">
+                          {req.items.map((i, idx) => (
+                             <span key={idx} className="mr-2 bg-white px-2 py-1 border rounded text-xs">{i.materialName}: {i.quantity}</span>
+                          ))}
+                      </div>
+                      <div className="flex gap-2">
+                           <button onClick={() => handleRequestAction(req._id, "approve")} className="flex-1 bg-green-500 text-white py-1 rounded text-sm hover:bg-green-600">Approve</button>
+                           <button onClick={() => handleRequestAction(req._id, "reject")} className="flex-1 bg-red-500 text-white py-1 rounded text-sm hover:bg-red-600">Deny</button>
+                      </div>
                   </div>
-                </td>
-                <td className="py-4 px-4 text-gray-700">{req.region}</td>
-                <td className="py-4 px-4">
-                  <div className="flex flex-wrap gap-1">
-                    {req.items.map((i, idx) => (
-                        <span key={idx} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
-                            {i.type}: {i.quantity}
-                        </span>
-                    ))}
+               ))}
+            </div>
+          )}
+        </div>
+
+        {/* APPROVED REQUESTS (Ready for Dispatch) */}
+        <h3 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Ready for Dispatch</h3>
+        <div className="overflow-x-auto mb-6">
+          {data.requests.filter(r => r.status === 'approved').length === 0 ? (
+               <p className="text-gray-500 text-sm py-2">No approved requests waiting for dispatch.</p>
+          ) : (
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               {data.requests.filter(r => r.status === 'approved').map(req => (
+                  <div key={req._id} className="bg-green-50 p-4 rounded-lg border border-green-200">
+                      <div className="flex justify-between">
+                         <h4 className="font-bold text-[#003049]">{req.requester?.name || "NGO"}</h4>
+                         <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full uppercase font-bold">Approved</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-2">{req.region}</p>
+                      <div className="mb-3 text-sm">
+                          {req.items.map((i, idx) => (
+                             <span key={idx} className="mr-2 bg-white px-2 py-1 border rounded text-xs">{i.materialName}: {i.quantity}</span>
+                          ))}
+                      </div>
+                      <button 
+                          onClick={() => {
+                              setDispatchForm(prev => ({ ...prev, requestId: req._id, destinationRegion: req.region }));
+                              setShowDispatchModal(true);
+                          }} 
+                          className="w-full bg-[#003049] text-white py-2 rounded text-sm hover:opacity-90 mt-1 shadow-sm"
+                      >
+                          Create Dispatch
+                      </button>
                   </div>
-                </td>
-                <td className="py-4 px-4">
-                  <span className={`px-3 py-1 text-xs font-medium rounded-full 
-                    ${req.status === 'approved' ? 'bg-green-100 text-green-700' : 
-                      req.status === 'rejected' ? 'bg-red-100 text-red-700' : 
-                      'bg-yellow-100 text-yellow-700'}`}>
-                    {req.status}
-                  </span>
-                </td>
-                <td className="py-4 px-4">
-                  {req.status === 'pending' && (
-                  <div className="flex gap-2">
-                    <button 
-                        onClick={() => handleRequestAction(req._id, "approve")}
-                        className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-medium rounded-lg transition-colors"
-                    >
-                      Approve
-                    </button>
-                    <button 
-                        onClick={() => handleRequestAction(req._id, "reject")}
-                        className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-colors"
-                    >
-                      Reject
-                    </button>
-                  </div>
-                  )}
-                  {req.status !== 'pending' && <span className="text-gray-400 text-sm">Action taken</span>}
-                </td>
-              </tr>
-              ))}
-            </tbody>
-          </table>
-            )}
+               ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -339,11 +372,11 @@ export default function AdminDashboard() {
                     <td className="py-4 px-4 text-gray-700">#{disp._id.slice(-6).toUpperCase()}</td>
                     <td className="py-4 px-4 text-gray-700">{disp.destinationRegion}</td>
                     <td className="py-4 px-4">
-                      <span className={`px-3 py-1 text-xs font-medium rounded-full 
-                        ${disp.status === 'Delivered' ? 'bg-green-100 text-green-700' : 
-                          disp.status === 'In Transit' ? 'bg-blue-100 text-blue-700' : 
+                      <span className={`px-3 py-1 text-xs font-bold rounded-full 
+                        ${disp.status === 'completed' || disp.status === 'Delivered' ? 'bg-green-100 text-green-700' : 
+                          disp.status === 'in_transit' || disp.status === 'In Transit' ? 'bg-blue-100 text-blue-700' : 
                           'bg-yellow-100 text-yellow-700'}`}>
-                        {disp.status || "Pending"}
+                        {disp.status === 'completed' ? 'DELIVERED' : disp.status || "Pending"}
                       </span>
                     </td>
                     <td className="py-4 px-4 text-gray-700">{new Date(disp.updatedAt).toLocaleDateString()}</td>
@@ -354,6 +387,91 @@ export default function AdminDashboard() {
             )}
         </div>
       </div>
+      {/* Create Dispatch Modal */}
+      {showDispatchModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-8 relative max-h-[90vh] overflow-y-auto">
+              <button onClick={() => setShowDispatchModal(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl font-bold">
+                &times;
+              </button>
+              <h3 className="text-2xl font-bold mb-6" style={{ color: "#003049" }}>
+                Create Dispatch Order
+              </h3>
+              <form onSubmit={handleDispatchSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: "#003049" }}>
+                    Selected Request
+                  </label>
+                  <select disabled value={dispatchForm.requestId} className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100">
+                    {data.requests.map((r) => (
+                      <option key={r._id} value={r._id}>
+                        {r.requester?.name} - {r.region}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: "#003049" }}>
+                    Destination Region
+                  </label>
+                  <input type="text" value={dispatchForm.destinationRegion} readOnly className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: "#003049" }}>
+                    Vehicle Number
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={dispatchForm.vehicleNo}
+                    onChange={(e) => setDispatchForm({ ...dispatchForm, vehicleNo: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 transition-all"
+                    style={{ "--tw-ring-color": "#003049" }}
+                    placeholder="e.g. MH-12-AB-1234"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: "#003049" }}>
+                    Driver Name
+                  </label>
+                  <input
+                    type="text"
+                    value={dispatchForm.driverName}
+                    onChange={(e) => setDispatchForm({ ...dispatchForm, driverName: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 transition-all"
+                    style={{ "--tw-ring-color": "#003049" }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: "#003049" }}>
+                    Driver Phone
+                  </label>
+                  <input
+                    type="text"
+                    value={dispatchForm.driverPhone}
+                    onChange={(e) => setDispatchForm({ ...dispatchForm, driverPhone: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 transition-all"
+                    style={{ "--tw-ring-color": "#003049" }}
+                  />
+                </div>
+
+                <div className="flex gap-3 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => setShowDispatchModal(false)}
+                    className="flex-1 px-6 py-3 border-2 rounded-lg font-semibold transition-all hover:bg-gray-50"
+                    style={{ borderColor: "#003049", color: "#003049" }}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="flex-1 px-6 py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90" style={{ backgroundColor: "#003049" }}>
+                    Create
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+      )}
     </div></>
   )
 }

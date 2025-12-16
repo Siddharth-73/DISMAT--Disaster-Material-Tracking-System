@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import LandingPage from "./pages/LandingPage";
 import PendingApproval from "./pages/PendingApproval";
+import StatisticsPage from "./pages/StatisticsPage";
 
 import AdminDashboard from "./pages/AdminDashboard";
 import WarehouseDashboard from "./pages/WarehouseDashboard";
@@ -19,6 +20,7 @@ function App() {
     <Routes>
       {/* Public */}
       <Route path="/" element={<LandingPage />} />
+      <Route path="/statistics" element={<StatisticsPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/pending" element={<PendingApproval />} />

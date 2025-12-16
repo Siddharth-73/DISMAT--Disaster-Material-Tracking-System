@@ -8,12 +8,12 @@ export default function NGODashboard() {
   const [showRequestModal, setShowRequestModal] = useState(false)
   const [requestForm, setRequestForm] = useState({
     region: "",
-    items: [{ type: "Food", quantity: "" }], // Start with one item
+    items: [{ materialName: "Food", quantity: "" }], // Fixed: materialName instead of type
     remarks: ""
   })
   const [message, setMessage] = useState({ text: "", type: "" })
   const navigate = useNavigate();
-  const { userr, logout } = useAuth();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
     logout();
@@ -28,7 +28,7 @@ export default function NGODashboard() {
   const handleAddItem = () => {
     setRequestForm({
         ...requestForm,
-        items: [...requestForm.items, { type: "Food", quantity: "" }]
+        items: [...requestForm.items, { materialName: "Food", quantity: "" }]
     })
   }
 
@@ -52,33 +52,21 @@ export default function NGODashboard() {
     }
 
     try {
+      // Backend expects: items: [{ materialName: String, quantity: Number }]
       await api.post("/requests", requestForm)
       setMessage({ text: "Request submitted successfully", type: "success" })
       setShowRequestModal(false)
       fetchDashboardData()
-      setRequestForm({ region: "", items: [{ type: "Food", quantity: "" }], remarks: "" })
+      setRequestForm({ region: "", items: [{ materialName: "Food", quantity: "" }], remarks: "" })
     } catch (err) {
        console.error(err)
        setMessage({ text: err.response?.data?.message || "Failed to submit request", type: "error" })
     }
   }
 
-  // Filter data for this NGO (AuthContext fetches all, but backend for /requests filters by role if NGO. 
-  // However, for Dispatches, the backend usually returns all or filtered. 
-  // AuthContext 'data.requests' will contain only THIS user's requests if backend enforces it.
-  // Let's assume AuthContext data is correct. Backend /requests for NGO returns own requests.
-  
-  // For Dispatches: Backend /dispatch returns all? Or implies filtering?
-  // Let's filter client side to be safe: dispatches where request.requester._id === user._id
-  // Actually, dispatch has 'request' populated.
-  
   const myRequests = data.requests || []
-  // Dispatch is linked to request. We want dispatches for MY requests.
+  // Filter dispatches related to my requests
   const myDispatches = data.dispatches.filter(d => 
-      // Check if dispatch's request ID matches one of my request IDs (simple check)
-      // OR deeply check dispatch.request.requester._id if populated
-      // Backend populate: path: 'request', populate: { path: 'requester' } ??
-      // Let's rely on finding standard match.
       myRequests.some(r => r._id === (d.request._id || d.request)) 
   )
 
@@ -191,18 +179,23 @@ export default function NGODashboard() {
                         </tr>
                     </thead>
                     <tbody>
-                        {myRequests.map(req => (
+                        {myRequests.map(req => {
+                            const status = req.status?.toLowerCase() || 'pending';
+                            return (
                             <tr key={req._id} className="border-b border-gray-200">
                                 <td className="px-6 py-4 text-gray-700">{req.region}</td>
                                 <td className="px-6 py-4 text-gray-700">
                                     {req.items.map((i, idx) => (
-                                        <div key={idx} className="text-sm">{i.type}: {i.quantity}</div>
+                                        <div key={idx} className="text-sm">
+                                            {/* Support both schema versions just in case */}
+                                            {i.materialName || i.type}: {i.quantity}
+                                        </div>
                                     ))}
                                 </td>
                                 <td className="px-6 py-4">
-                                     <span className={`px-3 py-1 text-xs font-medium rounded-full 
-                                        ${req.status === 'approved' ? 'bg-green-100 text-green-700' : 
-                                          req.status === 'rejected' ? 'bg-red-100 text-red-700' : 
+                                     <span className={`px-3 py-1 text-xs font-medium rounded-full uppercase
+                                        ${status === 'approved' ? 'bg-green-100 text-green-700' : 
+                                          status === 'denied' || status === 'rejected' ? 'bg-red-100 text-red-700' : 
                                           'bg-yellow-100 text-yellow-700'}`}>
                                         {req.status}
                                     </span>
@@ -211,7 +204,7 @@ export default function NGODashboard() {
                                     {new Date(req.createdAt).toLocaleDateString()}
                                 </td>
                             </tr>
-                        ))}
+                        )})}
                     </tbody>
                 </table>
                 )}
@@ -245,10 +238,10 @@ export default function NGODashboard() {
                                 <td className="px-6 py-4 text-gray-700">{disp.vehicleNo}</td>
                                 <td className="px-6 py-4">
                                     <span className={`px-3 py-1 text-xs font-medium rounded-full 
-                                        ${disp.status === 'Delivered' ? 'bg-green-100 text-green-700' : 
-                                        disp.status === 'In Transit' ? 'bg-blue-100 text-blue-700' : 
+                                        ${disp.status === 'completed' || disp.status === 'Delivered' ? 'bg-green-100 text-green-700 font-bold' : 
+                                        disp.status === 'in_transit' || disp.status === 'In Transit' ? 'bg-blue-100 text-blue-700' : 
                                         'bg-yellow-100 text-yellow-700'}`}>
-                                        {disp.status || "Pending"}
+                                        {disp.status === 'completed' ? 'Delivered' : disp.status || "Pending"}
                                     </span>
                                 </td>
                             </tr>
@@ -288,8 +281,8 @@ export default function NGODashboard() {
                     {requestForm.items.map((item, index) => (
                         <div key={index} className="flex gap-2">
                              <select
-                                value={item.type}
-                                onChange={e => handleItemChange(index, 'type', e.target.value)}
+                                value={item.materialName} // Fixed
+                                onChange={e => handleItemChange(index, 'materialName', e.target.value)}
                                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
                              >
                                 <option value="Food">Food</option>

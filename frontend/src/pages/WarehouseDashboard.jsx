@@ -63,16 +63,13 @@ export default function WarehouseDashboard() {
   const handleDispatchSubmit = async (e) => {
     e.preventDefault();
 
-    // Prepare items array from selection
-    // Request logic: we fulfill the items requested.
-    // Simplified: Just use the items from the request directly for now, assuming full fulfillment.
-
     if (!dispatchForm.requestId) return;
 
     const selectedRequest = data.requests.find((r) => r._id === dispatchForm.requestId);
     if (!selectedRequest) return;
 
     try {
+       // Items structure: backend expects [{ materialName, quantity }] which is what existing request.items has.
       const payload = {
         requestId: dispatchForm.requestId,
         items: selectedRequest.items, // Fulfilling all items
@@ -80,7 +77,7 @@ export default function WarehouseDashboard() {
         vehicleNo: dispatchForm.vehicleNo,
         driverName: dispatchForm.driverName,
         driverPhone: dispatchForm.driverPhone,
-        destinationRegion: selectedRequest.region, // Auto-fill destination from request
+        destinationRegion: selectedRequest.region, 
       };
 
       await api.post("/dispatch", payload);
@@ -308,6 +305,48 @@ export default function WarehouseDashboard() {
             </div>
           </div>
 
+      {/* Pending Requests Section (View Only for Warehouse) */}
+      <div id="pending-requests" className="mb-8 scroll-mt-8">
+        <h2 className="text-2xl font-bold text-[#003049] mb-4">Pending Material Requests</h2>
+        {data.requests.filter(r => r.status === 'pending').length === 0 ? (
+           <div className="bg-white rounded-xl shadow-md p-6 text-center">
+               <p className="text-gray-500">No pending requests.</p>
+           </div>
+        ) : (
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {data.requests.filter(r => r.status === 'pending').map(req => (
+                  <div key={req._id} className="bg-white rounded-xl shadow-md p-6 border-l-4 border-yellow-400">
+                      <div className="flex justify-between items-start mb-4">
+                          <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-[#003049] rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                  {req.requester?.name?.substring(0, 2).toUpperCase() || "NG"}
+                              </div>
+                              <div>
+                                  <h3 className="font-bold text-[#003049]">{req.requester?.name || "Unknown NGO"}</h3>
+                                  <p className="text-xs text-gray-500">{req.region}</p>
+                              </div>
+                          </div>
+                          <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-3 py-1 rounded-full uppercase">
+                              Pending
+                          </span>
+                      </div>
+                      
+                      <div className="mb-6">
+                          <p className="text-sm font-semibold text-gray-600 mb-2">Requested Items (Waiting Admin Approval):</p>
+                          <div className="flex flex-wrap gap-2">
+                              {req.items.map((i, idx) => (
+                                  <span key={idx} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-lg text-sm font-medium">
+                                      {i.materialName}: {i.quantity}
+                                  </span>
+                              ))}
+                          </div>
+                      </div>
+                  </div>
+              ))}
+           </div>
+        )}
+      </div>
+
           {/* Approved NGO Requests Section */}
           <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
             <h2 className="text-2xl font-bold mb-4" style={{ color: "#003049" }}>
@@ -336,7 +375,7 @@ export default function WarehouseDashboard() {
                         <td className="px-6 py-4 text-gray-700">
                           {req.items.map((i, idx) => (
                             <span key={idx} className="inline-block bg-gray-100 rounded px-2 py-1 text-xs mr-1 mb-1">
-                              {i.type}: {i.quantity}
+                              {i.materialName}: {i.quantity}
                             </span>
                           ))}
                         </td>
@@ -386,10 +425,10 @@ export default function WarehouseDashboard() {
                         <td className="px-6 py-4 text-gray-700">{disp.destinationRegion}</td>
                         <td className="px-6 py-4">
                           <span
-                            className={`px-3 py-1 rounded-full text-sm font-medium 
-                            ${disp.status === "Delivered" ? "bg-green-100 text-green-800" : disp.status === "In Transit" ? "bg-blue-100 text-blue-800" : "bg-yellow-100 text-yellow-800"}`}
+                            className={`px-3 py-1 rounded-full text-sm font-bold
+                            ${disp.status === "completed" || disp.status === "Delivered" ? "bg-green-100 text-green-800" : disp.status === "in_transit" || disp.status === "In Transit" ? "bg-blue-100 text-blue-800" : "bg-yellow-100 text-yellow-800"}`}
                           >
-                            {disp.status || "Pending"}
+                            {disp.status === 'completed' ? 'DELIVERED' : disp.status || "Pending"}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-gray-700">
