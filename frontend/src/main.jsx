@@ -17,63 +17,19 @@ import FieldWorkerDashboard from "./pages/FieldWorkerDashboard";
 import SuperAdminDashboard from "./pages/superadmin/SuperAdminDashboard";
 
 import ProtectedRoute from "./components/ProtectedRoute";
+import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import App from "./App";
+
+import "./utils/fixLeafletIcons";
+import "leaflet/dist/leaflet.css";
+import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
-          {/* Public */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/pending" element={<PendingApproval />} />
-
-          {/* Protected */}
-          <Route
-            path="/superadmin"
-            element={
-              <ProtectedRoute role="superadmin">
-                <SuperAdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute role="admin">
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/warehouse"
-            element={
-              <ProtectedRoute role="warehouse">
-                <WarehouseDashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/ngo"
-            element={
-              <ProtectedRoute role="ngo">
-                <NGODashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/fieldworker"
-            element={
-              <ProtectedRoute role="fieldworker">
-                <FieldWorkerDashboard />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
+        <App />
       </BrowserRouter>
     </AuthProvider>
   </React.StrictMode>
