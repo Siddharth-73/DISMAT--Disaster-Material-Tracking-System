@@ -17,8 +17,6 @@ import FieldWorkerDashboard from "./pages/FieldWorkerDashboard";
 import SuperAdminDashboard from "./pages/superadmin/SuperAdminDashboard";
 
 import ProtectedRoute from "./components/ProtectedRoute";
-import { BrowserRouter } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
 import App from "./App";
 
 import "./utils/fixLeafletIcons";
