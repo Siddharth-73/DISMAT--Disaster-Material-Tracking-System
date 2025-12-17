@@ -20,8 +20,7 @@ const materialSchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     category: { type: String },
     unit: { type: String, default: "units" },
-    warehouse: { type: String, required: true },
-
+    warehouse: { type: mongoose.Schema.Types.ObjectId, ref: "Warehouse", required: true},
     totalReceived: { type: Number, default: 0 },
     currentStock: { type: Number, default: 0 },
     lastReceiptAt: { type: Date },

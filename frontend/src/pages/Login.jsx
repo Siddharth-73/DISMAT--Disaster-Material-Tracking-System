@@ -13,15 +13,45 @@ const Login = () => {
     try {
       const res = await api.post("/auth/login", { email, password });
 
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      const { token, user } = res.data;
 
-      const role = res.data.user.role;
+      // Save auth data
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
-      if (role === "admin") navigate("/admin");
-      else if (role === "warehouse") navigate("/warehouse");
-      else if (role === "ngo") navigate("/ngo");
-      else if (role === "fieldworker") navigate("/fieldworker");
+      // 🔑 STEP 1: Pending users
+      if (user.status === "pending") {
+        navigate("/pending", { replace: true });
+        return;
+      }
+
+      // 🔑 STEP 2: Redirect by role
+      switch (user.role) {
+        case "superadmin":
+          // TEMP: redirect to admin until superadmin dashboard is built
+          navigate("/superadmin", { replace: true });
+          break;
+
+        case "admin":
+          navigate("/admin", { replace: true });
+          break;
+
+        case "warehouse":
+          navigate("/warehouse", { replace: true });
+          break;
+
+        case "ngo":
+          navigate("/ngo", { replace: true });
+          break;
+
+        case "fieldworker":
+          navigate("/fieldworker", { replace: true });
+          break;
+
+        default:
+          navigate("/", { replace: true });
+      }
+
     } catch (error) {
       alert(error.response?.data?.message || "Login failed");
     }
@@ -37,6 +67,7 @@ const Login = () => {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
 
         <input
@@ -44,9 +75,10 @@ const Login = () => {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
 
-        <button>Login</button>
+        <button type="submit">Login</button>
       </form>
 
       <p>

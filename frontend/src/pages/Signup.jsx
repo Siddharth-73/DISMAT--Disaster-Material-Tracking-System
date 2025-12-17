@@ -11,18 +11,24 @@ const Signup = () => {
   const [role, setRole] = useState("ngo"); 
 
   const handleSignup = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const res = await api.post("/auth/register", { name, email, password, role });
+  try {
+    const res = await api.post("/auth/register", {
+      name,
+      email,
+      password,
+      role   // this becomes requestedRole in backend
+    });
 
-      alert("Account created! Please login.");
-      navigate("/login");
+    alert("Signup request sent! Await approval from SuperAdmin.");
+    navigate("/pending"); // NEW route
 
-    } catch (error) {
-      alert(error.response?.data?.message || "Signup failed");
-    }
-  };
+  } catch (error) {
+    alert(error.response?.data?.message || "Signup failed");
+  }
+};
+
 
   return (
     <div>
