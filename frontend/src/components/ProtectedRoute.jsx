@@ -1,17 +1,27 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom"
 
-const ProtectedRoute = ({ children, role }) => {
-  const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+export default function ProtectedRoute({ role, children }) {
+  const storedUser = localStorage.getItem("user")
+  const user = storedUser ? JSON.parse(storedUser) : null
 
-  if (!token) return <Navigate to="/login" />;
-
-  if (role && user.role !== role) {
-    return <Navigate to="/login" />;
+  if (!user) {
+    return <Navigate to="/login" replace />
   }
 
-  return children;
-};
+  // Only redirect pending users IF they are still public
+  if (user.status === "pending" && user.role === "public") {
+    return <Navigate to="/pending" replace />
+  }
 
-export default ProtectedRoute;
+  // Blocked users
+  if (user.status === "blocked") {
+    return <Navigate to="/login" replace />
+  }
+
+  // Role mismatch
+  if (role && user.role !== role) {
+    return <Navigate to={`/${user.role}`} replace />
+  }
+
+  return children
+}
