@@ -66,7 +66,6 @@ export default function AdminDashboard() {
         vehicleNo: dispatchForm.vehicleNo,
         driverName: dispatchForm.driverName,
         driverPhone: dispatchForm.driverPhone,
-        driverPhone: dispatchForm.driverPhone,
         destinationRegion: selectedRequest.region,
         assignedTo: dispatchForm.assignedTo || undefined,
       };
