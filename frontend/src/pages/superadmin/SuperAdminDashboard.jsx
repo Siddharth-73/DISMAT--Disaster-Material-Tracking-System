@@ -9,6 +9,7 @@ import DisasterZones from "./DisasterZones";
 import CategoryManager from "./CategoryManager";
 import WarehouseManager from "./WarehouseManager";
 import AnalyticsDashboard from "./AnalyticsDashboard";
+import GlassCard from "../../components/ui/GlassCard";
 
 export default function SuperAdminDashboard() {
   const [users, setUsers] = useState([]);
@@ -35,22 +36,27 @@ export default function SuperAdminDashboard() {
       case "analytics":
         return (
           <div className="space-y-6">
-            <h2 className="text-3xl font-bold text-[#003049]">System Analytics</h2>
+            <h2 className="text-3xl font-bold text-white mb-6">System Analytics</h2>
             <AnalyticsDashboard />
-            <SuperAdminStats users={users} pending={pendingUsers} />
+            <SuperAdminStats counts={{
+                users: users.length,
+                pending: pendingUsers.length,
+                requests: 0, // Not currently fetched here, could be added if needed
+                warehouses: 0 // Not currently fetched here
+            }} />
           </div>
         );
       case "users":
         return (
           <div className="space-y-6">
-            <h2 className="text-3xl font-bold text-[#003049]">User Management</h2>
+            <h2 className="text-3xl font-bold text-white mb-6">User Management</h2>
             <UsersTable users={users} refresh={fetchData} />
           </div>
         );
       case "pending":
         return (
           <div className="space-y-6">
-            <h2 className="text-3xl font-bold text-[#003049]">Pending Approvals</h2>
+            <h2 className="text-3xl font-bold text-white mb-6">Pending Approvals</h2>
             <PendingUsers users={pendingUsers} refresh={fetchData} />
           </div>
         );
@@ -58,21 +64,21 @@ export default function SuperAdminDashboard() {
       case "zones":
         return (
           <div className="space-y-6">
-            <h2 className="text-3xl font-bold text-[#003049]">Disaster Zones</h2>
+            <h2 className="text-3xl font-bold text-white mb-6">Disaster Zones</h2>
             <DisasterZones />
           </div>
         );
       case "categories":
         return (
           <div className="space-y-6">
-            <h2 className="text-3xl font-bold text-[#003049]">Category Management</h2>
+            <h2 className="text-3xl font-bold text-white mb-6">Category Management</h2>
             <CategoryManager />
           </div>
         );
       case "warehouse": // Changed from 'warehouses' to match Sidebar if needed, or check Sidebar link
         return (
           <div className="space-y-6">
-            <h2 className="text-3xl font-bold text-[#003049]">Warehouse Management</h2>
+            <h2 className="text-3xl font-bold text-white mb-6">Warehouse Management</h2>
             <WarehouseManager />
           </div>
         );

@@ -3,6 +3,7 @@
 import LiveDisasterMap from "../components/LiveDisasterMap";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import GlassCard from "../components/ui/GlassCard";
 
 const LandingPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -370,109 +371,45 @@ const LandingPage = () => {
   };
 
   return (
-    <div
-      style={{
-        fontFamily: "system-ui, -apple-system, sans-serif",
-        lineHeight: "1.6",
-        backgroundColor: "#fdf0d5",
-        minHeight: "100vh",
-      }}
-    >
-      <header
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 9999,
-          backgroundColor: "#003049",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-        }}
-      >
-        <div
-          style={{
-            padding: "12px 40px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            color: "white",
-          }}
-        >
+    <div className="min-h-screen font-sans text-slate-100 bg-[#0f172a] relative overflow-hidden">
+       {/* Global Background Effects */}
+       <div className="fixed inset-0 pointer-events-none z-0">
+          <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-900/10 rounded-full blur-[120px]"></div>
+          <div className="absolute top-[20%] left-[-10%] w-[40%] h-[40%] bg-indigo-900/10 rounded-full blur-[100px]"></div>
+          <div className="absolute bottom-[-10%] right-[10%] w-[50%] h-[50%] bg-emerald-900/10 rounded-full blur-[120px]"></div>
+       </div>
+
+      <header className="fixed top-0 left-0 right-0 z-50 bg-black/40 backdrop-blur-md border-b border-white/5 shadow-2xl">
+        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <Link
             to="/"
             onClick={() => window.scrollTo(0, 0)}
-            style={{
-              margin: 0,
-              fontSize: "24px",
-              fontWeight: "700",
-              color: "white",
-              textDecoration: "none",
-              transition: "opacity 0.2s",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.8")}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+            className="text-2xl font-bold text-white tracking-tight flex items-center gap-2 hover:opacity-80 transition-opacity"
           >
-            DISMAT
+            <span className="text-3xl">🚀</span> DISMAT
           </Link>
-          <nav style={{ display: "flex", gap: "24px", alignItems: "center" }}>
+          <nav className="flex items-center gap-8">
             <a
               href="#safety"
-              style={{
-                color: "white",
-                textDecoration: "none",
-                fontSize: "14px",
-                transition: "opacity 0.2s",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
             >
-              Safety Tips
+              Safety Guidelines
             </a>
             <a
               href="#contact"
-              style={{
-                color: "white",
-                textDecoration: "none",
-                fontSize: "14px",
-                transition: "opacity 0.2s",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
             >
               Emergency
             </a>
             <Link
               to="/statistics"
-              style={{
-                color: "white",
-                textDecoration: "none",
-                fontSize: "14px",
-                transition: "opacity 0.2s",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
             >
               Statistics
             </Link>
             <Link
               to="/login"
-              style={{
-                color: "#003049",
-                backgroundColor: "white",
-                textDecoration: "none",
-                padding: "6px 16px",
-                borderRadius: "6px",
-                fontSize: "14px",
-                fontWeight: "600",
-                transition: "transform 0.2s",
-                display: "inline-block",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.transform = "scale(1.05)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.transform = "scale(1)")
-              }
+              className="px-5 py-2 rounded-lg text-sm font-bold bg-white text-slate-900 hover:bg-slate-200 transition-all transform hover:scale-105 shadow-[0_0_15px_rgba(255,255,255,0.3)]"
             >
               Login
             </Link>
@@ -480,877 +417,320 @@ const LandingPage = () => {
         </div>
       </header>
 
-      <div style={{ paddingTop: "60px" }}>
+      <div className="pt-24 relative z-10 pb-20">
         {/* HERO */}
-        <section
-          style={{
-            padding: "10px 0px 20px",
-            textAlign: "center",
-            backgroundColor: "#003049",
-            color: "white",
-          }}
-        >
-          <h1
-            style={{
-              fontSize: "48px",
-              fontWeight: "700",
-              margin: "0 0 16px 0",
-              lineHeight: "1.2",
-            }}
-          >
-            Disaster Relief Material Tracking System
+        <section className="py-12 text-center relative">
+          <h1 className="text-5xl md:text-6xl font-extrabold mb-4 text-white tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-slate-400">
+            Disaster Relief <br/> Material Tracking System
           </h1>
-          <p
-            style={{
-              fontSize: "20px",
-              margin: 0,
-              opacity: 0.9,
-              fontWeight: "300",
-            }}
-          >
+          <p className="text-xl md:text-2xl text-slate-400 font-light max-w-3xl mx-auto mb-12">
             Transparency • Accountability • Relief to the last person
           </p>
-        </section>
 
-        <section
-          style={{ padding: "0px 10px 20px", backgroundColor: "#003049" }}
-        >
-          <h2
-            style={{
-              fontSize: "36px",
-              fontWeight: "700",
-              marginBottom: "5px",
-              color: "white",
-              textAlign: "center",
-            }}
-          >
-            Disasters We Monitor
-          </h2>
-          <div
-            style={{
-              maxWidth: "1000px",
-              margin: "0 auto",
-              position: "relative",
-              borderRadius: "16px",
-              overflow: "hidden",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
-            }}
-          >
-            {disasterSlides.map((slide, index) => (
-              <div
-                key={index}
-                style={{
-                  display: index === currentSlide ? "block" : "none",
-                  position: "relative",
-                }}
-              >
-                <img
-                  src={slide.image || "/placeholder.svg"}
-                  alt={slide.title}
-                  style={{
-                    width: "100%",
-                    height: "400px",
-                    objectFit: "cover",
-                  }}
-                />
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    background:
-                      "linear-gradient(to top, rgba(0,0,0,0.9), transparent)",
-                    padding: "40px 32px 24px",
-                    color: "white",
-                  }}
-                >
-                  <div style={{ fontSize: "48px", marginBottom: "8px" }}>
-                    {slide.icon}
-                  </div>
-                  <h3
-                    style={{
-                      fontSize: "32px",
-                      fontWeight: "700",
-                      margin: "0 0 8px 0",
-                    }}
+          <div className="max-w-5xl mx-auto px-4">
+             <div className="relative rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 group">
+                {disasterSlides.map((slide, index) => (
+                  <div
+                    key={index}
+                    className={`transition-opacity duration-1000 ${index === currentSlide ? "block opacity-100" : "hidden opacity-0"}`}
                   >
-                    {slide.title}
-                  </h3>
-                  <p style={{ fontSize: "16px", margin: 0, opacity: 0.9 }}>
-                    {slide.description}
-                  </p>
+                    <img
+                      src={slide.image || "/placeholder.svg"}
+                      alt={slide.title}
+                      className="w-full h-[500px] object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent flex flex-col justify-end p-10 md:p-16 text-left">
+                       <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                          <div className="text-6xl mb-4 animate-bounce-slow">{slide.icon}</div>
+                          <h3 className="text-4xl font-bold text-white mb-2">{slide.title}</h3>
+                          <p className="text-lg text-slate-300">{slide.description}</p>
+                       </div>
+                    </div>
+                  </div>
+                ))}
+                
+                {/* Indicators */}
+                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-3 z-20">
+                    {disasterSlides.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentSlide(index)}
+                          className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${index === currentSlide ? "bg-white w-8" : "bg-white/40 hover:bg-white/60"}`}
+                        />
+                    ))}
                 </div>
-              </div>
-            ))}
-
-            {/* Slide indicators */}
-            <div
-              style={{
-                position: "absolute",
-                bottom: "16px",
-                left: "50%",
-                transform: "translateX(-50%)",
-                display: "flex",
-                gap: "8px",
-                zIndex: 10,
-              }}
-            >
-              {disasterSlides.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  style={{
-                    width: "10px",
-                    height: "10px",
-                    borderRadius: "50%",
-                    border: "none",
-                    backgroundColor:
-                      index === currentSlide
-                        ? "white"
-                        : "rgba(255,255,255,0.4)",
-                    cursor: "pointer",
-                    transition: "all 0.3s",
-                  }}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
-            </div>
+             </div>
           </div>
         </section>
 
         {/* Live Disaster Map */}
-        <section style={{ padding: "60px 40px", backgroundColor: "#fdf0d5" }}>
-          <h2
-            style={{
-              fontSize: "36px",
-              fontWeight: "700",
-              marginBottom: "24px",
-              color: "#003049",
-              textAlign: "center",
-            }}
-          >
-            Live Disaster Map
-          </h2>
-
-          <p
-            style={{
-              textAlign: "center",
-              marginBottom: "24px",
-              color: "#555",
-            }}
-          >
-            Real-time overview of active disaster zones across the country
-          </p>
-
-          <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-            <LiveDisasterMap />
-          </div>
+        <section className="py-20 px-4">
+           <GlassCard className="max-w-6xl mx-auto p-8 md:p-12 relative overflow-hidden" delay={0.1}>
+              <div className="text-center mb-10">
+                 <h2 className="text-4xl font-bold text-white mb-4">Live Disaster Map</h2>
+                 <p className="text-slate-400">Real-time overview of active disaster zones across the country</p>
+              </div>
+              <div className="rounded-xl overflow-hidden border border-white/10 shadow-2xl h-[600px] relative z-10">
+                 <LiveDisasterMap />
+              </div>
+              
+               {/* Decorative Lights */}
+               <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/20 rounded-full blur-[80px] pointer-events-none"></div>
+               <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/20 rounded-full blur-[80px] pointer-events-none"></div>
+           </GlassCard>
         </section>
 
-        {/* Disaster Safety Guidelines - Updated Images */}
-        <section
-          id="safety"
-          style={{ padding: "60px 40px", maxWidth: "1200px", margin: "0 auto" }}
-        >
-          <h2
-            style={{
-              fontSize: "36px",
-              fontWeight: "700",
-              marginBottom: "40px",
-              color: "#003049",
-              textAlign: "center",
-            }}
-          >
-            Disaster Safety Guidelines
-          </h2>
+        {/* Disaster Safety Guidelines */}
+        <section id="safety" className="py-20 px-4 max-w-6xl mx-auto">
+          <h2 className="text-4xl font-bold text-white mb-12 text-center">Disaster Safety Guidelines</h2>
 
-          <div style={{ position: "relative" }}>
-            {/* Carousel container */}
-            <div
-              style={{
-                backgroundColor: "white",
-                borderRadius: "16px",
-                padding: "40px",
-                boxShadow: "0 8px 24px rgba(0,48,73,0.12)",
-                minHeight: "600px", // Increased min-height
-              }}
-            >
+          <div className="relative">
+            <GlassCard className="p-8 md:p-12 min-h-[600px] transition-all duration-500" delay={0.2}>
               {!selectedDisaster ? (
-                // Carousel view
-                <div style={{ textAlign: "center" }}>
-                  <div
-                    style={{
-                      display: "inline-block",
-                      marginBottom: "24px",
-                      width: "100%", // Full width for larger presence
-                      maxWidth: "800px", // Increased max-width
-                    }}
-                  >
-                    <img
-                      src={
-                        comprehensiveSafetyTips[currentSafetyIndex].image ||
-                        "/placeholder.svg"
-                      }
-                      alt={comprehensiveSafetyTips[currentSafetyIndex].type}
-                      style={{
-                        width: "100%",
-                        height: "500px", // Increased height to 500px - TALLER
-                        objectFit: "cover",
-                        borderRadius: "12px",
-                        boxShadow: "0 4px 16px rgba(0,48,73,0.15)",
-                      }}
-                    />
-                  </div>
-                  <div style={{ fontSize: "40px", marginBottom: "10px" }}>
-                    {comprehensiveSafetyTips[currentSafetyIndex].icon}
-                  </div>
-                  <h3
-                    style={{
-                      fontSize: "32px",
-                      fontWeight: "700",
-                      color: "#003049",
-                      marginBottom: "24px",
-                    }}
-                  >
-                    {comprehensiveSafetyTips[currentSafetyIndex].type}
-                  </h3>
-                  <button
-                    onClick={() =>
-                      setSelectedDisaster(
-                        comprehensiveSafetyTips[currentSafetyIndex]
-                      )
-                    }
-                    style={{
-                      padding: "14px 32px",
-                      fontSize: "16px",
-                      fontWeight: "600",
-                      backgroundColor: "#003049",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                      transition: "all 0.2s",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "#00416b";
-                      e.currentTarget.style.transform = "scale(1.05)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "#003049";
-                      e.currentTarget.style.transform = "scale(1)";
-                    }}
-                  >
-                    View Safety Guidelines
-                  </button>
+                // Carousel View
+                <div className="flex flex-col items-center text-center">
+                   <div className="w-full max-w-3xl mb-8 relative group cursor-pointer" onClick={() => setSelectedDisaster(comprehensiveSafetyTips[currentSafetyIndex])}>
+                      <img 
+                        src={comprehensiveSafetyTips[currentSafetyIndex].image || "/placeholder.svg"} 
+                        alt={comprehensiveSafetyTips[currentSafetyIndex].type}
+                        className="w-full h-[400px] object-cover rounded-xl shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]"
+                      />
+                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100">
+                          <span className="px-6 py-3 bg-white/20 backdrop-blur-md rounded-full text-white font-bold border border-white/30">Read Guidelines</span>
+                      </div>
+                   </div>
+
+                   <div className="text-6xl mb-4">{comprehensiveSafetyTips[currentSafetyIndex].icon}</div>
+                   <h3 className="text-3xl font-bold text-white mb-6">{comprehensiveSafetyTips[currentSafetyIndex].type}</h3>
+                   
+                   <button
+                     onClick={() => setSelectedDisaster(comprehensiveSafetyTips[currentSafetyIndex])}
+                     className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition-all shadow-lg hover:shadow-blue-500/30"
+                   >
+                     View Safety Guidelines
+                   </button>
                 </div>
               ) : (
-                // Detailed view
-                <div>
-                  <button
-                    onClick={() => setSelectedDisaster(null)}
-                    style={{
-                      marginBottom: "24px",
-                      padding: "8px 16px",
-                      fontSize: "14px",
-                      backgroundColor: "#f0f0f0",
-                      border: "none",
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                      transition: "background-color 0.2s",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#e0e0e0")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#f0f0f0")
-                    }
-                  >
-                    ← Back to Carousel
-                  </button>
+                // Detailed View
+                <div className="animate-fadeIn">
+                   <button 
+                     onClick={() => setSelectedDisaster(null)}
+                     className="mb-8 flex items-center gap-2 text-slate-400 hover:text-white transition-colors font-medium px-4 py-2 hover:bg-white/5 rounded-lg"
+                   >
+                      <span>←</span> Back to Carousel
+                   </button>
 
-                  <div style={{ textAlign: "center", marginBottom: "32px" }}>
-                    <div style={{ fontSize: "48px", marginBottom: "12px" }}>
-                      {selectedDisaster.icon}
-                    </div>
-                    <h3
-                      style={{
-                        fontSize: "32px",
-                        fontWeight: "700",
-                        color: "#003049",
-                        margin: 0,
-                      }}
-                    >
-                      {selectedDisaster.type}
-                    </h3>
-                  </div>
+                   <div className="text-center mb-10">
+                      <div className="text-5xl mb-2">{selectedDisaster.icon}</div>
+                      <h3 className="text-3xl font-bold text-white">{selectedDisaster.type}</h3>
+                   </div>
 
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns:
-                        "repeat(auto-fit, minmax(280px, 1fr))",
-                      gap: "24px",
-                    }}
-                  >
-                    {/* Before */}
-                    <div
-                      style={{
-                        backgroundColor: "#e8f4f8",
-                        padding: "24px",
-                        borderRadius: "12px",
-                        border: "2px solid #003049",
-                      }}
-                    >
-                      <h4
-                        style={{
-                          fontSize: "20px",
-                          fontWeight: "700",
-                          color: "#003049",
-                          marginBottom: "16px",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                        }}
-                      >
-                        <span style={{ fontSize: "24px" }}>✅</span> Before
-                        (Preparedness)
-                      </h4>
-                      <ul
-                        style={{
-                          margin: 0,
-                          paddingLeft: "20px",
-                          color: "#333",
-                        }}
-                      >
-                        {selectedDisaster.before.map((tip, i) => (
-                          <li
-                            key={i}
-                            style={{
-                              marginBottom: "8px",
-                              fontSize: "14px",
-                              lineHeight: "1.6",
-                            }}
-                          >
-                            {tip}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {/* Before */}
+                      <div className="bg-blue-900/10 border border-blue-500/30 p-6 rounded-xl hover:bg-blue-900/20 transition-colors">
+                         <h4 className="text-xl font-bold text-blue-400 mb-4 flex items-center gap-2">
+                            <span>✅</span> Before (Preparedness)
+                         </h4>
+                         <ul className="space-y-3">
+                            {selectedDisaster.before.map((tip, i) => (
+                              <li key={i} className="text-slate-300 text-sm flex gap-2">
+                                <span className="text-blue-500">•</span> {tip}
+                              </li>
+                            ))}
+                         </ul>
+                      </div>
 
-                    {/* During */}
-                    <div
-                      style={{
-                        backgroundColor: "#fff3e0",
-                        padding: "24px",
-                        borderRadius: "12px",
-                        border: "2px solid #ff9800",
-                      }}
-                    >
-                      <h4
-                        style={{
-                          fontSize: "20px",
-                          fontWeight: "700",
-                          color: "#ff9800",
-                          marginBottom: "16px",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                        }}
-                      >
-                        <span style={{ fontSize: "24px" }}>⚠️</span> During
-                        (What to Do)
-                      </h4>
-                      <ul
-                        style={{
-                          margin: 0,
-                          paddingLeft: "20px",
-                          color: "#333",
-                        }}
-                      >
-                        {selectedDisaster.during.map((tip, i) => (
-                          <li
-                            key={i}
-                            style={{
-                              marginBottom: "8px",
-                              fontSize: "14px",
-                              lineHeight: "1.6",
-                            }}
-                          >
-                            {tip}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                      {/* During */}
+                      <div className="bg-amber-900/10 border border-amber-500/30 p-6 rounded-xl hover:bg-amber-900/20 transition-colors">
+                         <h4 className="text-xl font-bold text-amber-400 mb-4 flex items-center gap-2">
+                            <span>⚠️</span> During (Action)
+                         </h4>
+                         <ul className="space-y-3">
+                            {selectedDisaster.during.map((tip, i) => (
+                              <li key={i} className="text-slate-300 text-sm flex gap-2">
+                                <span className="text-amber-500">•</span> {tip}
+                              </li>
+                            ))}
+                         </ul>
+                      </div>
 
-                    {/* After */}
-                    <div
-                      style={{
-                        backgroundColor: "#f1f8e9",
-                        padding: "24px",
-                        borderRadius: "12px",
-                        border: "2px solid #4caf50",
-                      }}
-                    >
-                      <h4
-                        style={{
-                          fontSize: "20px",
-                          fontWeight: "700",
-                          color: "#4caf50",
-                          marginBottom: "16px",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                        }}
-                      >
-                        <span style={{ fontSize: "24px" }}>🔁</span> After
-                        (Recovery)
-                      </h4>
-                      <ul
-                        style={{
-                          margin: 0,
-                          paddingLeft: "20px",
-                          color: "#333",
-                        }}
-                      >
-                        {selectedDisaster.after.map((tip, i) => (
-                          <li
-                            key={i}
-                            style={{
-                              marginBottom: "8px",
-                              fontSize: "14px",
-                              lineHeight: "1.6",
-                            }}
-                          >
-                            {tip}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
+                      {/* After */}
+                      <div className="bg-emerald-900/10 border border-emerald-500/30 p-6 rounded-xl hover:bg-emerald-900/20 transition-colors">
+                         <h4 className="text-xl font-bold text-emerald-400 mb-4 flex items-center gap-2">
+                            <span>🔁</span> After (Recovery)
+                         </h4>
+                         <ul className="space-y-3">
+                            {selectedDisaster.after.map((tip, i) => (
+                              <li key={i} className="text-slate-300 text-sm flex gap-2">
+                                <span className="text-emerald-500">•</span> {tip}
+                              </li>
+                            ))}
+                         </ul>
+                      </div>
+                   </div>
                 </div>
               )}
-            </div>
+            </GlassCard>
 
-            {/* Navigation arrows */}
+            {/* Navigation Arrows */}
             {!selectedDisaster && (
-              <>
-                <button
-                  onClick={prevSafetyTip}
-                  style={{
-                    position: "absolute",
-                    left: "-20px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    width: "48px",
-                    height: "48px",
-                    borderRadius: "50%",
-                    backgroundColor: "#003049",
-                    color: "white",
-                    border: "none",
-                    fontSize: "24px",
-                    cursor: "pointer",
-                    boxShadow: "0 4px 12px rgba(0,48,73,0.3)",
-                    transition: "all 0.2s",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "#00416b";
-                    e.currentTarget.style.transform =
-                      "translateY(-50%) scale(1.1)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "#003049";
-                    e.currentTarget.style.transform =
-                      "translateY(-50%) scale(1)";
-                  }}
-                  aria-label="Previous disaster"
-                >
-                  ‹
-                </button>
-                <button
-                  onClick={nextSafetyTip}
-                  style={{
-                    position: "absolute",
-                    right: "-20px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    width: "48px",
-                    height: "48px",
-                    borderRadius: "50%",
-                    backgroundColor: "#003049",
-                    color: "white",
-                    border: "none",
-                    fontSize: "24px",
-                    cursor: "pointer",
-                    boxShadow: "0 4px 12px rgba(0,48,73,0.3)",
-                    transition: "all 0.2s",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "#00416b";
-                    e.currentTarget.style.transform =
-                      "translateY(-50%) scale(1.1)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "#003049";
-                    e.currentTarget.style.transform =
-                      "translateY(-50%) scale(1)";
-                  }}
-                  aria-label="Next disaster"
-                >
-                  ›
-                </button>
-              </>
+               <>
+                 <button 
+                   onClick={prevSafetyTip}
+                   className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 w-12 h-12 flex items-center justify-center rounded-full bg-black/40 text-white hover:bg-blue-600 transition-colors border border-white/10 hover:scale-110 z-20"
+                 >
+                    ‹
+                 </button>
+                 <button 
+                   onClick={nextSafetyTip}
+                   className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 w-12 h-12 flex items-center justify-center rounded-full bg-black/40 text-white hover:bg-blue-600 transition-colors border border-white/10 hover:scale-110 z-20"
+                 >
+                    ›
+                 </button>
+               </>
             )}
           </div>
-
-          {/* Indicator dots */}
+          
+           {/* Dots */}
           {!selectedDisaster && (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                gap: "12px",
-                marginTop: "32px",
-              }}
-            >
-              {comprehensiveSafetyTips.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setCurrentSafetyIndex(index);
-                    setSelectedDisaster(null);
-                  }}
-                  style={{
-                    width: "12px",
-                    height: "12px",
-                    borderRadius: "50%",
-                    border: "2px solid #003049",
-                    backgroundColor:
-                      index === currentSafetyIndex ? "#003049" : "transparent",
-                    cursor: "pointer",
-                    transition: "all 0.2s",
-                  }}
-                  aria-label={`Go to ${comprehensiveSafetyTips[index].type}`}
-                />
-              ))}
+            <div className="flex justify-center gap-3 mt-8">
+               {comprehensiveSafetyTips.map((_, index) => (
+                 <button
+                   key={index}
+                   onClick={() => setCurrentSafetyIndex(index)}
+                   className={`w-3 h-3 rounded-full border border-blue-500 transition-all ${index === currentSafetyIndex ? "bg-blue-500 scale-125" : "bg-transparent hover:bg-blue-500/50"}`}
+                 />
+               ))}
             </div>
           )}
         </section>
 
         {/* Recent Disaster News */}
-        <section
-          style={{
-            padding: "60px 40px",
-            maxWidth: "1200px",
-            margin: "0 auto",
-          }}
-        >
-          <h2
-            style={{
-              fontSize: "36px",
-              fontWeight: "700",
-              marginBottom: "40px",
-              color: "#003049",
-              textAlign: "center",
-            }}
-          >
-            Recent Disaster News
-          </h2>
+        <section className="py-20 px-4 max-w-7xl mx-auto">
+          <h2 className="text-4xl font-bold text-white mb-12 text-center">Recent Disaster News</h2>
 
           {loadingNews ? (
-            <p
-              style={{
-                textAlign: "center",
-                fontSize: "18px",
-                color: "#003049",
-              }}
-            >
-              Loading disaster news...
-            </p>
+             <div className="text-center py-10">
+                <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-slate-400">Fetching latest updates...</p>
+             </div>
           ) : newsError ? (
-             <p style={{ textAlign: "center", fontSize: "18px", color: "#c62828" }}>
-               Unable to load disaster news at the moment
-             </p>
+             <p className="text-center text-red-400">Unable to load disaster news at the moment</p>
           ) : newsArticles.length === 0 ? (
-            <p style={{ textAlign: "center", fontSize: "18px", color: "#666" }}>
-              No recent news available
-            </p>
+             <p className="text-center text-slate-500">No recent news available</p>
           ) : (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-                gap: "24px",
-              }}
-            >
-              {newsArticles.map((article, i) => (
-                <a
-                  key={i}
-                  href={article.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    backgroundColor: "white",
-                    borderRadius: "12px",
-                    overflow: "hidden",
-                    boxShadow: "0 4px 12px rgba(0,48,73,0.1)",
-                    transition: "all 0.3s ease",
-                    textDecoration: "none",
-                    color: "inherit",
-                    display: "block",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-8px)";
-                    e.currentTarget.style.boxShadow =
-                      "0 12px 24px rgba(0,48,73,0.2)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow =
-                      "0 4px 12px rgba(0,48,73,0.1)";
-                  }}
-                >
-                  <img
-                    src={article.image || "/placeholder.svg"}
-                    alt={article.title}
-                    style={{
-                      width: "100%",
-                      height: "200px",
-                      objectFit: "cover",
-                    }}
-                  />
-                  <div style={{ padding: "20px" }}>
-                    <h3
-                      style={{
-                        fontSize: "18px",
-                        fontWeight: "600",
-                        color: "#003049",
-                        marginBottom: "12px",
-                        lineHeight: "1.4",
-                        display: "-webkit-box",
-                        WebkitLineClamp: "2",
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden"
-                      }}
-                    >
-                      {article.title}
-                    </h3>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        fontSize: "12px",
-                        color: "#666",
-                      }}
-                    >
-                      <span>{article.source.name}</span>
-                      <span>
-                        {new Date(article.publishedAt).toLocaleDateString()}
-                      </span>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+               {newsArticles.map((article, i) => (
+                 <a
+                   key={i}
+                   href={article.url}
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   className="group block bg-white/5 border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 transition-all hover:-translate-y-2 hover:shadow-2xl"
+                 >
+                    <div className="h-48 overflow-hidden relative">
+                       <img 
+                         src={article.image || "/placeholder.svg"} 
+                         alt={article.title}
+                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                       />
+                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
                     </div>
-                    <div style={{
-                        marginTop: "12px",
-                        fontSize: "14px",
-                        color: "#003049",
-                        fontWeight: "600"
-                    }}>
-                        Read More →
+                    <div className="p-6">
+                       <div className="flex justify-between items-center text-xs text-slate-400 mb-3">
+                          <span className="px-2 py-1 bg-white/5 rounded uppercase tracking-wider">{article.source.name}</span>
+                          <span>{new Date(article.publishedAt).toLocaleDateString()}</span>
+                       </div>
+                       <h3 className="text-lg font-bold text-white mb-4 line-clamp-2 group-hover:text-blue-400 transition-colors">
+                          {article.title}
+                       </h3>
+                       <span className="text-sm font-bold text-blue-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300">
+                          Read Full Article →
+                       </span>
                     </div>
-                  </div>
-                </a>
-              ))}
+                 </a>
+               ))}
             </div>
           )}
         </section>
 
-        {/* Removed: LIVE RELIEF STATISTICS */}
-        {/* Removed: RECENT ACTIVITY */}
+        {/* Emergency Form */}
+        <section id="contact" className="py-20 px-4">
+           <div className="max-w-2xl mx-auto">
+              <div className="text-center mb-10">
+                 <h2 className="text-4xl font-bold text-white mb-4">Emergency Contact Form</h2>
+                 <p className="text-slate-400">Report an emergency and our team will respond immediately</p>
+              </div>
 
-        {/* EMERGENCY FORM */}
-        <section
-          id="contact"
-          style={{
-            padding: "60px 40px",
-            backgroundColor: "#fdf0d5",
-          }}
-        >
-          <div style={{ maxWidth: "600px", margin: "0 auto" }}>
-            <h2
-              style={{
-                fontSize: "36px",
-                fontWeight: "700",
-                marginBottom: "16px",
-                color: "#003049",
-                textAlign: "center",
-              }}
-            >
-              Emergency Contact Form
-            </h2>
-            <p
-              style={{
-                textAlign: "center",
-                color: "#666",
-                marginBottom: "40px",
-                fontSize: "16px",
-              }}
-            >
-              Report an emergency and our team will respond immediately
-            </p>
+              <GlassCard className="p-8 md:p-12 relative overflow-hidden">
+                 {/* Flash warning stripe */}
+                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 via-orange-500 to-red-500"></div>
 
-            <form
-              onSubmit={submitReport}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "20px",
-                backgroundColor: "white",
-                padding: "32px",
-                borderRadius: "12px",
-                boxShadow: "0 4px 16px rgba(0,48,73,0.1)",
-              }}
-            >
-              <input
-                type="text"
-                placeholder="Your Name"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                required
-                style={{
-                  padding: "16px",
-                  fontSize: "16px",
-                  border: "2px solid #e0e0e0",
-                  borderRadius: "8px",
-                  outline: "none",
-                  transition: "border-color 0.2s",
-                }}
-                onFocus={(e) => (e.currentTarget.style.borderColor = "#003049")}
-                onBlur={(e) => (e.currentTarget.style.borderColor = "#e0e0e0")}
-              />
+                 <form onSubmit={submitReport} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                       <div>
+                          <input
+                            type="text"
+                            placeholder="Your Name"
+                            value={form.name}
+                            onChange={(e) => setForm({ ...form, name: e.target.value })}
+                            required
+                            className="w-full px-5 py-4 rounded-lg bg-black/20 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all"
+                          />
+                       </div>
+                       <div>
+                          <input
+                            type="text"
+                            placeholder="Contact Number"
+                            value={form.contact}
+                            onChange={(e) => setForm({ ...form, contact: e.target.value })}
+                            required
+                            className="w-full px-5 py-4 rounded-lg bg-black/20 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all"
+                          />
+                       </div>
+                    </div>
 
-              <input
-                type="text"
-                placeholder="Contact Number"
-                value={form.contact}
-                onChange={(e) => setForm({ ...form, contact: e.target.value })}
-                required
-                style={{
-                  padding: "16px",
-                  fontSize: "16px",
-                  border: "2px solid #e0e0e0",
-                  borderRadius: "8px",
-                  outline: "none",
-                  transition: "border-color 0.2s",
-                }}
-                onFocus={(e) => (e.currentTarget.style.borderColor = "#003049")}
-                onBlur={(e) => (e.currentTarget.style.borderColor = "#e0e0e0")}
-              />
+                    <input
+                      type="text"
+                      placeholder="Location"
+                      value={form.location}
+                      onChange={(e) => setForm({ ...form, location: e.target.value })}
+                      required
+                      className="w-full px-5 py-4 rounded-lg bg-black/20 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all"
+                    />
 
-              <input
-                type="text"
-                placeholder="Location"
-                value={form.location}
-                onChange={(e) => setForm({ ...form, location: e.target.value })}
-                required
-                style={{
-                  padding: "16px",
-                  fontSize: "16px",
-                  border: "2px solid #e0e0e0",
-                  borderRadius: "8px",
-                  outline: "none",
-                  transition: "border-color 0.2s",
-                }}
-                onFocus={(e) => (e.currentTarget.style.borderColor = "#003049")}
-                onBlur={(e) => (e.currentTarget.style.borderColor = "#e0e0e0")}
-              />
+                    <textarea
+                      placeholder="Describe the emergency..."
+                      value={form.description}
+                      onChange={(e) => setForm({ ...form, description: e.target.value })}
+                      required
+                      rows={5}
+                      className="w-full px-5 py-4 rounded-lg bg-black/20 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all resize-none"
+                    />
 
-              <textarea
-                placeholder="Describe the emergency"
-                value={form.description}
-                onChange={(e) =>
-                  setForm({ ...form, description: e.target.value })
-                }
-                required
-                rows={5}
-                style={{
-                  padding: "16px",
-                  fontSize: "16px",
-                  border: "2px solid #e0e0e0",
-                  borderRadius: "8px",
-                  outline: "none",
-                  resize: "vertical",
-                  fontFamily: "inherit",
-                  transition: "border-color 0.2s",
-                }}
-                onFocus={(e) => (e.currentTarget.style.borderColor = "#003049")}
-                onBlur={(e) => (e.currentTarget.style.borderColor = "#e0e0e0")}
-              />
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="w-full py-4 rounded-lg font-bold text-white text-lg bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 transition-all shadow-[0_0_20px_rgba(220,38,38,0.4)] hover:shadow-[0_0_30px_rgba(220,38,38,0.6)] hover:scale-[1.01] disabled:opacity-50"
+                    >
+                       {submitting ? "Transmitting..." : "🚨 Transmit Emergency Report"}
+                    </button>
 
-              <button
-                type="submit"
-                disabled={submitting}
-                style={{
-                  padding: "16px",
-                  fontSize: "18px",
-                  fontWeight: "600",
-                  backgroundColor: submitting ? "#ccc" : "#003049",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "8px",
-                  cursor: submitting ? "not-allowed" : "pointer",
-                  transition: "all 0.2s",
-                }}
-                onMouseEnter={(e) => {
-                  if (!submitting) {
-                    e.currentTarget.style.backgroundColor = "#00416b";
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                    e.currentTarget.style.boxShadow =
-                      "0 4px 12px rgba(0,48,73,0.3)";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!submitting) {
-                    e.currentTarget.style.backgroundColor = "#003049";
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "none";
-                  }
-                }}
-              >
-                {submitting ? "Submitting..." : "Submit Emergency Report"}
-              </button>
-
-              {message && (
-                <div
-                  style={{
-                    padding: "16px",
-                    borderRadius: "8px",
-                    backgroundColor: message.includes("success")
-                      ? "#e8f5e9"
-                      : "#ffebee",
-                    color: message.includes("success") ? "#2e7d32" : "#c62828",
-                    textAlign: "center",
-                    fontWeight: "500",
-                  }}
-                >
-                  {message}
-                </div>
-              )}
-            </form>
-          </div>
+                    {message && (
+                       <div className={`p-4 rounded-lg text-center font-bold ${message.includes("success") ? "bg-green-500/20 text-green-300 border border-green-500/30" : "bg-red-500/20 text-red-300 border border-red-500/30"}`}>
+                          {message}
+                       </div>
+                    )}
+                 </form>
+              </GlassCard>
+           </div>
         </section>
 
-        {/* FOOTER */}
-        <footer
-          style={{
-            padding: "32px 40px",
-            backgroundColor: "#003049",
-            color: "white",
-            textAlign: "center",
-          }}
-        >
-          <p style={{ margin: 0, fontSize: "14px" }}>
-            ©️ 2025 DISMAT — Disaster Relief Material Tracking System
-          </p>
+        {/* Footer */}
+        <footer className="border-t border-white/5 bg-black/20 backdrop-blur-lg py-8 text-center">
+            <p className="text-slate-500 text-sm">
+               ©️ 2025 DISMAT — Disaster Relief Material Tracking System
+            </p>
         </footer>
       </div>
     </div>

@@ -16,12 +16,10 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 
 import ProtectedRoute from "./components/ProtectedRoute";
-import DashboardLayout from "./layouts/DashboardLayout";
 
 function App() {
   return (
     <Routes>
-      {/* Public */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/statistics" element={<StatisticsPage />} />
       <Route path="/login" element={<Login />} />
@@ -33,7 +31,7 @@ function App() {
 
       {/* Protected */}
       <Route
-        path="/superadmin"
+        path="/superadmin/*"
         element={
           <ProtectedRoute role="superadmin">
             <SuperAdminDashboard />

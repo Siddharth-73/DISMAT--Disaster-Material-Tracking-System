@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { useAuth } from "../context/AuthContext"
 import api from "../api/axios"
 import DashboardLayout from "../layouts/DashboardLayout";
+import GlassCard from "../components/ui/GlassCard";
 
 export default function NGODashboard() {
   const { data, fetchDashboardData, user } = useAuth()
@@ -82,58 +83,61 @@ export default function NGODashboard() {
         )}
 
         {/* Create Request CTA */}
-        <div id="create-request" className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8 flex items-center justify-between">
-            <div>
-                <h2 className="text-2xl font-bold mb-2 text-[#003049] dark:text-white">Need Supplies?</h2>
-                <p className="text-gray-600 dark:text-gray-400">Submit a new request for relief materials.</p>
+        <GlassCard id="create-request" className="p-6 mb-8 flex items-center justify-between relative overflow-hidden group border-blue-500/30" delay={0.1}>
+            <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                <span className="text-9xl">📝</span>
+            </div>
+            <div className="relative z-10">
+                <h2 className="text-2xl font-bold mb-2 text-white">Need Supplies?</h2>
+                <p className="text-slate-400">Submit a new request for relief materials.</p>
             </div>
             <button
               onClick={() => setShowRequestModal(true)}
-              className="px-6 py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90 shadow-lg bg-[#003049] dark:bg-blue-600 dark:hover:bg-blue-500"
+              className="px-6 py-3 rounded-lg font-semibold text-white transition-all hover:shadow-[0_0_15px_rgba(37,99,235,0.4)] bg-blue-600 hover:bg-blue-500 relative z-10"
             >
               Create Request
             </button>
-        </div>
+        </GlassCard>
 
         {/* My Requests */}
-        <div id="track-requests" className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8 scroll-mt-8">
-             <h2 className="text-2xl font-bold mb-6 text-[#003049] dark:text-white">My Requests</h2>
+        <GlassCard id="track-requests" className="p-6 mb-8 scroll-mt-8" delay={0.2}>
+             <h2 className="text-2xl font-bold mb-6 text-white">My Requests</h2>
              <div className="overflow-x-auto">
                 {myRequests.length === 0 ? (
-                    <p className="text-gray-500 dark:text-gray-400 text-center py-4">No requests submitted yet.</p>
+                    <p className="text-slate-400 text-center py-4">No requests submitted yet.</p>
                 ) : (
                 <table className="w-full">
                     <thead>
-                        <tr className="bg-[#003049] dark:bg-slate-900">
-                            <th className="px-6 py-4 text-left text-white font-semibold">Region</th>
-                            <th className="px-6 py-4 text-left text-white font-semibold">Items</th>
-                            <th className="px-6 py-4 text-left text-white font-semibold">Status</th>
-                            <th className="px-6 py-4 text-left text-white font-semibold">Date</th>
+                        <tr className="border-b border-white/10 sticky top-0 z-10 bg-obsidian-foreground/50 backdrop-blur-md">
+                            <th className="px-6 py-4 text-left text-slate-300 font-semibold">Region</th>
+                            <th className="px-6 py-4 text-left text-slate-300 font-semibold">Items</th>
+                            <th className="px-6 py-4 text-left text-slate-300 font-semibold">Status</th>
+                            <th className="px-6 py-4 text-left text-slate-300 font-semibold">Date</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-white/5">
                         {myRequests.map(req => {
                             const status = req.status?.toLowerCase() || 'pending';
                             return (
-                            <tr key={req._id} className="border-b border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
-                                <td className="px-6 py-4 text-gray-700 dark:text-gray-300">{req.region}</td>
-                                <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
+                            <tr key={req._id} className="hover:bg-white/5 transition-colors">
+                                <td className="px-6 py-4 text-white font-medium">{req.region}</td>
+                                <td className="px-6 py-4 text-slate-300">
                                     {req.items.map((i, idx) => (
                                         <div key={idx} className="text-sm">
-                                            {/* Support both schema versions just in case */}
-                                            {i.materialName || i.type}: {i.quantity}
+                                            <span className="bg-white/10 px-2 py-1 rounded text-xs mr-2 border border-white/5">{i.materialName || i.type}</span>
+                                            <span className="font-mono text-blue-300">{i.quantity}</span>
                                         </div>
                                     ))}
                                 </td>
                                 <td className="px-6 py-4">
-                                     <span className={`px-3 py-1 text-xs font-medium rounded-full uppercase
-                                        ${status === 'approved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : 
-                                          status === 'denied' || status === 'rejected' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' : 
-                                          'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'}`}>
+                                     <span className={`px-3 py-1 text-xs font-medium rounded-full uppercase border 
+                                        ${status === 'approved' ? 'bg-green-500/20 text-green-300 border-green-500/30' : 
+                                          status === 'denied' || status === 'rejected' ? 'bg-red-500/20 text-red-300 border-red-500/30' : 
+                                          'bg-yellow-500/20 text-yellow-300 border-yellow-500/30'}`}>
                                         {req.status}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-sm">
+                                <td className="px-6 py-4 text-slate-400 text-sm">
                                     {new Date(req.createdAt).toLocaleDateString()}
                                 </td>
                             </tr>
@@ -142,38 +146,38 @@ export default function NGODashboard() {
                 </table>
                 )}
              </div>
-        </div>
+        </GlassCard>
 
         {/* Incoming Dispatches */}
-        <div id="dispatch" className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 scroll-mt-8">
-             <h2 className="text-2xl font-bold mb-6 text-[#003049] dark:text-white">Incoming Dispatches</h2>
+        <GlassCard id="dispatch" className="p-6 scroll-mt-8" delay={0.3}>
+             <h2 className="text-2xl font-bold mb-6 text-white">Incoming Dispatches</h2>
              <div className="overflow-x-auto">
                 {myDispatches.length === 0 ? (
-                    <p className="text-gray-500 dark:text-gray-400 text-center py-4">No dispatches found for your requests.</p>
+                    <p className="text-slate-400 text-center py-4">No dispatches found for your requests.</p>
                 ) : (
                 <table className="w-full">
                     <thead>
-                        <tr className="bg-[#003049] dark:bg-slate-900">
-                            <th className="px-6 py-4 text-left text-white font-semibold">Dispatch ID</th>
-                            <th className="px-6 py-4 text-left text-white font-semibold">Driver</th>
-                            <th className="px-6 py-4 text-left text-white font-semibold">Vehicle</th>
-                            <th className="px-6 py-4 text-left text-white font-semibold">Status</th>
+                        <tr className="border-b border-white/10 sticky top-0 z-10 bg-obsidian-foreground/50 backdrop-blur-md">
+                            <th className="px-6 py-4 text-left text-slate-300 font-semibold">Dispatch ID</th>
+                            <th className="px-6 py-4 text-left text-slate-300 font-semibold">Driver</th>
+                            <th className="px-6 py-4 text-left text-slate-300 font-semibold">Vehicle</th>
+                            <th className="px-6 py-4 text-left text-slate-300 font-semibold">Status</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-white/5">
                          {myDispatches.map(disp => (
-                            <tr key={disp._id} className="border-b border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
-                                <td className="px-6 py-4 text-gray-700 dark:text-gray-300">#{disp._id.slice(-6).toUpperCase()}</td>
-                                <td className="px-6 py-4 text-gray-700 dark:text-gray-300">
-                                    <div>{disp.driverName}</div>
-                                    <div className="text-xs text-gray-500 dark:text-gray-400">{disp.driverPhone}</div>
+                            <tr key={disp._id} className="hover:bg-white/5 transition-colors">
+                                <td className="px-6 py-4 text-slate-300 font-mono text-xs">#{disp._id.slice(-6).toUpperCase()}</td>
+                                <td className="px-6 py-4 text-slate-300">
+                                    <div className="text-white font-medium">{disp.driverName}</div>
+                                    <div className="text-xs text-slate-500">{disp.driverPhone}</div>
                                 </td>
-                                <td className="px-6 py-4 text-gray-700 dark:text-gray-300">{disp.vehicleNo}</td>
+                                <td className="px-6 py-4 text-slate-300 font-mono">{disp.vehicleNo}</td>
                                 <td className="px-6 py-4">
-                                    <span className={`px-3 py-1 text-xs font-medium rounded-full 
-                                        ${disp.status === 'completed' || disp.status === 'Delivered' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 font-bold' : 
-                                        disp.status === 'in_transit' || disp.status === 'In Transit' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : 
-                                        'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'}`}>
+                                    <span className={`px-3 py-1 text-xs font-medium rounded-full border
+                                        ${disp.status === 'completed' || disp.status === 'Delivered' ? 'bg-green-500/20 text-green-300 border-green-500/30 font-bold' : 
+                                        disp.status === 'in_transit' || disp.status === 'In Transit' ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' : 
+                                        'bg-yellow-500/20 text-yellow-300 border-yellow-500/30'}`}>
                                         {disp.status === 'completed' ? 'Delivered' : disp.status || "Pending"}
                                     </span>
                                 </td>
@@ -183,67 +187,70 @@ export default function NGODashboard() {
                 </table>
                 )}
              </div>
-        </div>
+        </GlassCard>
 
        {/* Request Modal */}
        {showRequestModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-lg w-full p-8 relative max-h-[90vh] overflow-y-auto">
-             <button onClick={() => setShowRequestModal(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white text-xl font-bold">&times;</button>
-            <h3 className="text-2xl font-bold mb-6 text-[#003049] dark:text-white">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <GlassCard className="max-w-lg w-full p-8 relative max-h-[90vh] overflow-y-auto" delay={0}>
+             <button 
+                onClick={() => setShowRequestModal(false)} 
+                className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
+             >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+             </button>
+            <h3 className="text-2xl font-bold mb-6 text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
               New Supply Request
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                   <label className="block text-sm font-semibold mb-2 text-[#003049] dark:text-gray-300">Target Region</label>
+                   <label className="block text-sm font-semibold mb-2 text-slate-300">Target Region</label>
                    <input
                       type="text"
                       required
                       value={requestForm.region}
                       onChange={e => setRequestForm({...requestForm, region: e.target.value})}
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 transition-all bg-white dark:bg-slate-700 dark:text-white"
-                      style={{ "--tw-ring-color": "#003049" }}
+                      className="w-full px-4 py-3 border border-white/10 rounded-lg bg-black/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder-slate-500"
                       placeholder="e.g. North District"
                    />
                 </div>
                 
                 <div className="space-y-3">
-                    <label className="block text-sm font-semibold text-[#003049] dark:text-gray-300">Items Needed</label>
+                    <label className="block text-sm font-semibold text-slate-300">Items Needed</label>
                     {requestForm.items.map((item, index) => (
                         <div key={index} className="flex gap-2">
                              <select
                                 value={item.materialName} 
                                 onChange={e => handleItemChange(index, 'materialName', e.target.value)}
-                                className="flex-1 px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white"
+                                className="flex-1 px-3 py-2 border border-white/10 rounded-lg bg-black/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                              >
-                                <option value="Food">Food</option>
-                                <option value="Water">Water</option>
-                                <option value="Medical">Medical</option>
-                                <option value="Shelter">Shelter</option>
-                                <option value="Clothing">Clothing</option>
+                                <option value="Food" className="bg-slate-800">Food</option>
+                                <option value="Water" className="bg-slate-800">Water</option>
+                                <option value="Medical" className="bg-slate-800">Medical</option>
+                                <option value="Shelter" className="bg-slate-800">Shelter</option>
+                                <option value="Clothing" className="bg-slate-800">Clothing</option>
                              </select>
                              <input
                                 type="number"
                                 placeholder="Qty"
                                 value={item.quantity}
                                 onChange={e => handleItemChange(index, 'quantity', e.target.value)}
-                                className="w-24 px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 dark:text-white"
+                                className="w-24 px-3 py-2 border border-white/10 rounded-lg bg-black/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 placeholder-slate-500"
                              />
                              {requestForm.items.length > 1 && (
-                                 <button type="button" onClick={() => handleRemoveItem(index)} className="text-red-500 font-bold px-2">&times;</button>
+                                 <button type="button" onClick={() => handleRemoveItem(index)} className="text-red-400 hover:text-red-300 font-bold px-2">&times;</button>
                              )}
                         </div>
                     ))}
-                    <button type="button" onClick={handleAddItem} className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">+ Add Item</button>
+                    <button type="button" onClick={handleAddItem} className="text-sm font-medium text-blue-400 hover:text-blue-300 hover:underline">+ Add Item</button>
                 </div>
 
                 <div>
-                   <label className="block text-sm font-semibold mb-2 text-[#003049] dark:text-gray-300">Remarks</label>
+                   <label className="block text-sm font-semibold mb-2 text-slate-300">Remarks</label>
                    <textarea
                       value={requestForm.remarks}
                       onChange={e => setRequestForm({...requestForm, remarks: e.target.value})}
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 transition-all bg-white dark:bg-slate-700 dark:text-white"
-                      style={{ "--tw-ring-color": "#003049" }}
+                      className="w-full px-4 py-3 border border-white/10 rounded-lg bg-black/20 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder-slate-500"
                       rows="2"
                    ></textarea>
                 </div>
@@ -252,20 +259,19 @@ export default function NGODashboard() {
                  <button
                    type="button"
                    onClick={() => setShowRequestModal(false)}
-                   className="flex-1 px-6 py-3 border-2 rounded-lg font-semibold transition-all hover:bg-gray-50 dark:hover:bg-slate-700 dark:border-slate-600 dark:text-gray-300"
-                   style={{ borderColor: "#003049", color: "#003049" }}
+                   className="flex-1 px-6 py-3 border border-white/10 rounded-lg font-semibold text-slate-300 hover:bg-white/5 transition-all"
                  >
                    Cancel
                  </button>
                  <button
                    type="submit"
-                   className="flex-1 px-6 py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90 bg-[#003049] dark:bg-blue-600 dark:hover:bg-blue-500"
+                   className="flex-1 px-6 py-3 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-500 shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all transform active:scale-95"
                  >
                    Submit Request
                  </button>
                </div>
             </form>
-          </div>
+          </GlassCard>
         </div>
        )}
     </DashboardLayout>

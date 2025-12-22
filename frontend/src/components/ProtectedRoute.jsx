@@ -4,6 +4,9 @@ import { useAuth } from "../context/AuthContext"
 export default function ProtectedRoute({ role, children }) {
   const { user, loading } = useAuth()
 
+  // Debug Logs
+  console.log("ProtectedRoute check:", { path: window.location.pathname, userRole: user?.role, requiredRole: role, loading });
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900">
@@ -13,6 +16,7 @@ export default function ProtectedRoute({ role, children }) {
   }
 
   if (!user) {
+    console.warn("No user found, redirecting to login");
     return <Navigate to="/login" replace />
   }
 
@@ -27,7 +31,8 @@ export default function ProtectedRoute({ role, children }) {
   }
 
   // Role mismatch
-  if (role && user.role !== role) {
+  if (role && user.role?.toLowerCase().trim() !== role.toLowerCase().trim()) {
+    console.warn(`Role mismatch! User: ${user.role}, Required: ${role}. Redirecting to /${user.role}`);
     return <Navigate to={`/${user.role}`} replace />
   }
 

@@ -54,7 +54,12 @@ export const getAnalytics = async (req, res) => {
       },
       {
         $project: {
-          name: { $arrayElemAt: ["$warehouseInfo.name", 0] },
+          name: { 
+            $ifNull: [
+              { $arrayElemAt: ["$warehouseInfo.name", 0] }, 
+              "Unknown Warehouse" 
+            ] 
+          },
           totalStock: 1
         }
       }

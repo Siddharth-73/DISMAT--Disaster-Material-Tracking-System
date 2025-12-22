@@ -17,7 +17,8 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
+    // Ignore 401 from login page (invalid credentials should not reload page)
+    if (error.response && error.response.status === 401 && !error.config.url.includes("/auth/login")) {
       sessionStorage.removeItem("token");
       sessionStorage.removeItem("user");
       window.location.href = "/login";

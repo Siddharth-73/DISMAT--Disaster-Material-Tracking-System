@@ -15,6 +15,7 @@ import {
   YAxis,
   CartesianGrid,
 } from 'recharts';
+import GlassCard from '../components/ui/GlassCard';
 
 const StatisticsPage = () => {
   const [loading, setLoading] = useState(true);
@@ -60,12 +61,11 @@ const StatisticsPage = () => {
     if (articles.length === 0) return;
 
     // --- 1. KPI: Time Span ---
-    // GNews returns by relevance/date. Let's find min and max date.
     const dates = articles.map(a => new Date(a.publishedAt).getTime());
     const minDate = new Date(Math.min(...dates));
     const maxDate = new Date(Math.max(...dates));
     
-    // Format: "DD MMM - DD MMM YYYY" if same year, else include year
+    // Format: "DD MMM - DD MMM YYYY"
     const formatDate = (d) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
     setTimeSpan(`${formatDate(minDate)} - ${formatDate(maxDate)}`);
 
@@ -126,90 +126,80 @@ const StatisticsPage = () => {
     setSourceData(sData);
   };
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+  const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
 
   return (
-    <div style={{ fontFamily: "system-ui, -apple-system, sans-serif", backgroundColor: "#fdf0d5", minHeight: "100vh", paddingBottom: "40px" }}>
+    <div className="min-h-screen font-sans text-slate-100 bg-[#0f172a] relative">
+       {/* Background */}
+       <div className="fixed inset-0 pointer-events-none z-0">
+          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-900/10 rounded-full blur-[120px]"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-900/10 rounded-full blur-[120px]"></div>
+       </div>
+
       {/* Navbar */}
-      <header
-        style={{
-          padding: "12px 40px",
-          backgroundColor: "#003049",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          color: "white",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-        }}
-      >
-        <Link
-          to="/"
-          style={{
-            fontSize: "24px",
-            fontWeight: "700",
-            color: "white",
-            textDecoration: "none",
-          }}
-        >
-          DISMAT
-        </Link>
-        <Link
-          to="/"
-          style={{
-            color: "white",
-            textDecoration: "none",
-            fontSize: "14px",
-            fontWeight: "500",
-          }}
-        >
-          ← Back to Home
-        </Link>
+      <header className="fixed top-0 left-0 right-0 z-50 bg-black/40 backdrop-blur-md border-b border-white/5 shadow-2xl">
+        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+            <Link
+            to="/"
+            className="text-2xl font-bold text-white tracking-tight hover:opacity-80 transition-opacity"
+            >
+            DISMAT
+            </Link>
+            <Link
+            to="/"
+            className="text-sm font-medium text-slate-300 hover:text-white transition-colors flex items-center gap-1"
+            >
+            ← Back to Home
+            </Link>
+        </div>
       </header>
 
-      <div style={{ padding: "40px 20px", maxWidth: "1200px", margin: "0 auto" }}>
-        <h1 style={{ textAlign: "center", color: "#003049", fontSize: "36px", fontWeight: "700", marginBottom: "10px" }}>
-          Disaster Reporting Analytics
-        </h1>
-        <p style={{ textAlign: "center", color: "#666", marginBottom: "50px", fontSize: "16px" }}>
-          Analyzing patterns in recent disaster-related news coverage
-        </p>
+      <div className="pt-32 px-4 pb-20 relative z-10 max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            Disaster Reporting Analytics
+            </h1>
+            <p className="text-xl text-slate-400">
+            Analyzing patterns in recent disaster-related news coverage
+            </p>
+        </div>
 
         {loading ? (
-          <p style={{ textAlign: "center", fontSize: "18px", color: "#003049" }}>Loading disaster statistics...</p>
+            <div className="text-center py-20">
+                <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+                <p className="text-xl text-slate-300">Loading disaster statistics...</p>
+            </div>
         ) : error ? (
-          <p style={{ textAlign: "center", fontSize: "18px", color: "#c62828" }}>Unable to load disaster statistics at the moment</p>
+            <div className="text-center py-20">
+                 <p className="text-xl text-red-400">Unable to load disaster statistics at the moment</p>
+            </div>
         ) : (
           <>
             {/* KPI CARDS SECTION */}
-            <div style={{ 
-                display: "grid", 
-                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", 
-                gap: "20px", 
-                marginBottom: "40px" 
-            }}>
-                <div style={kpiCardStyle}>
-                    <p style={kpiLabelStyle}>Total Articles Analyzed</p>
-                    <h3 style={kpiValueStyle}>{totalArticles}</h3>
-                </div>
-                <div style={kpiCardStyle}>
-                    <p style={kpiLabelStyle}>Most Reported Type</p>
-                    <h3 style={{...kpiValueStyle, color: "#d62828"}}>{topDisasterType}</h3>
-                </div>
-                <div style={kpiCardStyle}>
-                    <p style={kpiLabelStyle}>Unique News Sources</p>
-                    <h3 style={kpiValueStyle}>{uniqueSourcesCount}</h3>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                <GlassCard className="p-8 text-center" delay={0.1}>
+                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Total Articles</p>
+                    <h3 className="text-5xl font-extrabold text-blue-400">{totalArticles}</h3>
+                </GlassCard>
+                <GlassCard className="p-8 text-center" delay={0.2}>
+                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Most Reported Type</p>
+                    <h3 className="text-5xl font-extrabold text-red-400">{topDisasterType}</h3>
+                </GlassCard>
+                <GlassCard className="p-8 text-center" delay={0.3}>
+                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Unique Sources</p>
+                    <h3 className="text-5xl font-extrabold text-emerald-400">{uniqueSourcesCount}</h3>
+                </GlassCard>
             </div>
 
             {/* CHARTS GRID */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(500px, 1fr))", gap: "40px", marginBottom: "40px" }}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
               
               {/* Pie Chart */}
-              <div style={chartCardStyle}>
-                <h3 style={chartTitleStyle}>Disaster Type Distribution</h3>
-                <p style={chartSubTitleStyle}>Proportion of articles by disaster category</p>
+              <GlassCard className="p-8" delay={0.4}>
+                <h3 className="text-2xl font-bold text-white mb-2 text-center">Disaster Type Distribution</h3>
+                <p className="text-slate-400 text-sm text-center mb-8">Proportion of articles by disaster category</p>
                 {pieData.length > 0 ? (
-                  <div style={{ height: "300px" }}>
+                  <div className="h-[300px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
@@ -222,74 +212,76 @@ const StatisticsPage = () => {
                           label
                         >
                           {pieData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="rgba(0,0,0,0.5)" strokeWidth={1} />
                           ))}
                         </Pie>
-                        <Tooltip />
-                        <Legend />
+                        <Tooltip 
+                            contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', borderColor: '#334155', borderRadius: '8px', color: '#fff' }}
+                            itemStyle={{ color: '#fff' }}
+                        />
+                        <Legend wrapperStyle={{ paddingTop: '20px' }} />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
                 ) : (
-                  <p style={{ textAlign: "center", color: "#999" }}>No data available.</p>
+                  <p className="text-center text-slate-500 py-20">No data available.</p>
                 )}
-              </div>
+              </GlassCard>
 
               {/* Line Chart */}
-              <div style={chartCardStyle}>
-                <h3 style={chartTitleStyle}>Monthly Reporting Trend</h3>
-                <p style={chartSubTitleStyle}>Volume of disaster articles over time</p>
+              <GlassCard className="p-8" delay={0.5}>
+                <h3 className="text-2xl font-bold text-white mb-2 text-center">Monthly Reporting Trend</h3>
+                <p className="text-slate-400 text-sm text-center mb-8">Volume of disaster articles over time</p>
                 {lineData.length > 0 ? (
-                  <div style={{ height: "300px" }}>
+                  <div className="h-[300px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={lineData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" stroke="#003049" />
-                        <YAxis allowDecimals={false} stroke="#003049" />
-                        <Tooltip />
-                        <Legend />
-                        <Line type="monotone" dataKey="count" stroke="#d62828" strokeWidth={2} activeDot={{ r: 8 }} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                        <XAxis dataKey="name" stroke="#94a3b8" />
+                        <YAxis allowDecimals={false} stroke="#94a3b8" />
+                        <Tooltip 
+                            contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', borderColor: '#334155', borderRadius: '8px', color: '#fff' }}
+                        />
+                        <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                        <Line type="monotone" dataKey="count" stroke="#f43f5e" strokeWidth={3} activeDot={{ r: 8, fill: '#fff' }} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
                 ) : (
-                  <p style={{ textAlign: "center", color: "#999" }}>No data available.</p>
+                  <p className="text-center text-slate-500 py-20">No data available.</p>
                 )}
-              </div>
+              </GlassCard>
 
             </div>
 
-             {/* Top Sources Chart (New Section) */}
-             <div style={{...chartCardStyle, marginBottom: "40px" }}>
-                <h3 style={chartTitleStyle}>Top News Sources Reporting Disasters</h3>
-                <p style={chartSubTitleStyle}>Most active publishers in this dataset</p>
+             {/* Top Sources Chart */}
+             <GlassCard className="p-8 mb-12" delay={0.6}>
+                <h3 className="text-2xl font-bold text-white mb-2 text-center">Top News Sources</h3>
+                <p className="text-slate-400 text-sm text-center mb-8">Most active publishers in this dataset</p>
                 {sourceData.length > 0 ? (
-                  <div style={{ height: "300px" }}>
+                  <div className="h-[300px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={sourceData} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                        <XAxis type="number" stroke="#003049" allowDecimals={false} />
-                        <YAxis dataKey="name" type="category" stroke="#003049" width={150} />
-                        <Tooltip cursor={{fill: 'transparent'}} />
-                        <Bar dataKey="count" fill="#003049" barSize={20} radius={[0, 4, 4, 0]} />
+                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(255,255,255,0.1)" />
+                        <XAxis type="number" stroke="#94a3b8" allowDecimals={false} />
+                        <YAxis dataKey="name" type="category" stroke="#94a3b8" width={150} tick={{fill: '#cbd5e1'}} />
+                        <Tooltip 
+                            cursor={{fill: 'rgba(255,255,255,0.05)'}}
+                            contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', borderColor: '#334155', borderRadius: '8px', color: '#fff' }}
+                        />
+                        <Bar dataKey="count" fill="#3b82f6" barSize={20} radius={[0, 4, 4, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
                 ) : (
-                    <p style={{ textAlign: "center", color: "#999" }}>No data available.</p>
+                    <p className="text-center text-slate-500 py-20">No data available.</p>
                 )}
-             </div>
+             </GlassCard>
 
-            {/* REQUIRED DISCLAIMER */}
-            <div style={{
-                backgroundColor: "#e3f2fd",
-                borderLeft: "5px solid #2196f3",
-                padding: "20px",
-                borderRadius: "8px",
-                boxShadow: "0 2px 5px rgba(0,0,0,0.05)"
-            }}>
-                <p style={{ margin: 0, color: "#0d47a1", fontWeight: "500", fontSize: "15px", display: "flex", alignItems: "center", gap: "10px" }}>
-                    <span style={{ fontSize: "20px" }}>ℹ️</span>
+            {/* DISCLAIMER */}
+            <div className="bg-blue-900/20 border-l-4 border-blue-500 p-6 rounded-r-lg">
+                <p className="flex items-center gap-4 text-blue-200 text-sm font-medium">
+                    <span className="text-2xl">ℹ️</span>
                     These statistics are derived from publicly reported disaster-related news articles and represent media reporting trends, not official disaster records.
                 </p>
             </div>
@@ -298,57 +290,6 @@ const StatisticsPage = () => {
       </div>
     </div>
   );
-};
-
-// Styles
-const kpiCardStyle = {
-    backgroundColor: "white",
-    padding: "24px",
-    borderRadius: "12px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-    textAlign: "center",
-    transition: "transform 0.2s ease",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center"
-};
-
-const kpiLabelStyle = {
-    fontSize: "14px",
-    color: "#666",
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: "0.5px",
-    marginBottom: "5px"
-};
-
-const kpiValueStyle = {
-    fontSize: "32px",
-    color: "#003049",
-    fontWeight: "800",
-    margin: 0
-};
-
-const chartCardStyle = {
-    backgroundColor: "white",
-    padding: "30px",
-    borderRadius: "12px",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.05)"
-};
-
-const chartTitleStyle = {
-    textAlign: "center", 
-    color: "#003049", 
-    fontSize: "20px", 
-    fontWeight: "700", 
-    marginBottom: "5px"
-};
-
-const chartSubTitleStyle = {
-    textAlign: "center", 
-    color: "#888", 
-    fontSize: "14px", 
-    marginBottom: "25px"
 };
 
 export default StatisticsPage;

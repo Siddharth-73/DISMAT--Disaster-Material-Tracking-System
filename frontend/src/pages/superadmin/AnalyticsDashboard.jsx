@@ -4,8 +4,9 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   LineChart, Line, PieChart, Pie, Cell, AreaChart, Area
 } from "recharts";
+import GlassCard from "../../components/ui/GlassCard";
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
+const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
 export default function AnalyticsDashboard() {
   const [data, setData] = useState(null);
@@ -29,32 +30,32 @@ export default function AnalyticsDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#003049]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }
   
-  if (!data) return <div className="text-center p-10 text-gray-500">No analytics data available.</div>;
+  if (!data) return <div className="text-center p-10 text-slate-400">No analytics data available.</div>;
 
   const { requestStats, dispatchStats, userStats, requestTrends, stockStats } = data;
 
   return (
     <div className="space-y-8 animate-fadeIn">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-[#003049] to-[#024a6e] p-8 rounded-2xl text-white shadow-xl relative overflow-hidden">
+      <GlassCard className="p-8 relative overflow-hidden">
         <div className="relative z-10">
-          <h2 className="text-3xl font-bold mb-2">System Overview</h2>
-          <p className="text-blue-100">Real-time insights and performance metrics.</p>
+          <h2 className="text-3xl font-bold mb-2 text-white">System Overview</h2>
+          <p className="text-blue-200">Real-time insights and performance metrics.</p>
         </div>
-        <div className="absolute right-0 top-0 h-full w-1/3 bg-white/5 skew-x-12 transform origin-bottom-right"></div>
-      </div>
+        <div className="absolute right-0 top-0 h-full w-1/3 bg-white/5 skew-x-12 transform origin-bottom-right pointer-events-none"></div>
+      </GlassCard>
 
       {/* Stats Cards - Distributions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Request Status */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 min-h-[400px]">
-          <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
-            <span className="w-2 h-8 bg-blue-500 rounded-full"></span>
+        <GlassCard className="p-6 min-h-[400px]">
+          <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+            <span className="w-1 h-6 bg-blue-500 rounded-full"></span>
             Requests Status
           </h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -67,23 +68,25 @@ export default function AnalyticsDashboard() {
                 innerRadius={60}
                 outerRadius={80}
                 paddingAngle={5}
+                stroke="none"
               >
                 {requestStats.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
               <Tooltip 
-                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
+                contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
+                itemStyle={{ color: '#fff' }}
               />
               <Legend verticalAlign="bottom" height={36}/>
             </PieChart>
           </ResponsiveContainer>
-        </div>
+        </GlassCard>
 
         {/* Dispatch Status */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 min-h-[400px]">
-          <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
-             <span className="w-2 h-8 bg-green-500 rounded-full"></span>
+        <GlassCard className="p-6 min-h-[400px]">
+          <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+             <span className="w-1 h-6 bg-emerald-500 rounded-full"></span>
              Dispatch Status
           </h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -96,37 +99,39 @@ export default function AnalyticsDashboard() {
                 innerRadius={60}
                 outerRadius={80}
                 paddingAngle={5}
+                stroke="none"
               >
                 {dispatchStats.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[(index + 2) % COLORS.length]} />
                 ))}
               </Pie>
               <Tooltip 
-                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
+                contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
+                itemStyle={{ color: '#fff' }}
               />
               <Legend verticalAlign="bottom" height={36}/>
             </PieChart>
           </ResponsiveContainer>
-        </div>
+        </GlassCard>
       </div>
 
       {/* User Role Distribution */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100">
-          <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
-            <span className="w-2 h-8 bg-purple-500 rounded-full"></span>
+      <GlassCard className="p-6">
+          <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+            <span className="w-1 h-6 bg-purple-500 rounded-full"></span>
             User Distribution by Role
           </h3>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
                <BarChart data={userStats} layout="vertical" margin={{ left: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#E5E7EB" />
+                  <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="rgba(255,255,255,0.1)" />
                   <XAxis type="number" hide />
-                  <YAxis dataKey="_id" type="category" width={100} axisLine={false} tickLine={false} tick={{fill: '#4B5563', fontWeight: 600}} />
+                  <YAxis dataKey="_id" type="category" width={100} axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontWeight: 600, fontSize: 12}} />
                   <Tooltip 
-                     cursor={{fill: '#F3F4F6'}}
-                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
+                     cursor={{fill: 'rgba(255,255,255,0.05)'}}
+                     contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
                   />
-                  <Bar dataKey="count" fill="#8884d8" radius={[0, 8, 8, 0]} barSize={40}>
+                  <Bar dataKey="count" fill="#8884d8" radius={[0, 4, 4, 0]} barSize={24}>
                      {userStats.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                      ))}
@@ -134,50 +139,59 @@ export default function AnalyticsDashboard() {
                </BarChart>
             </ResponsiveContainer>
           </div>
-      </div>
+      </GlassCard>
 
       {/* Request Trends Line Chart */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100">
-        <h3 className="text-lg font-bold text-gray-800 mb-6">Request Trends (Last 7 Days)</h3>
+      <GlassCard className="p-6">
+        <h3 className="text-lg font-bold text-white mb-6">Request Trends (Last 7 Days)</h3>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={requestTrends}>
               <defs>
                 <linearGradient id="colorRequests" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ff7300" stopOpacity={0.1}/>
-                  <stop offset="95%" stopColor="#ff7300" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-              <XAxis dataKey="_id" axisLine={false} tickLine={false} tick={{fill: '#6B7280'}} />
-              <YAxis axisLine={false} tickLine={false} tick={{fill: '#6B7280'}} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
+              <XAxis dataKey="_id" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
+              <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
               <Tooltip 
-                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
+                 contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
               />
-              <Area type="monotone" dataKey="count" stroke="#ff7300" strokeWidth={3} fillOpacity={1} fill="url(#colorRequests)" name="Requests" />
+              <Area type="monotone" dataKey="count" stroke="#f59e0b" strokeWidth={3} fillOpacity={1} fill="url(#colorRequests)" name="Requests" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      </GlassCard>
 
       {/* Warehouse Stock Bar Chart */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100">
-        <h3 className="text-lg font-bold text-gray-800 mb-6">Warehouse Stock Levels</h3>
+      <GlassCard className="p-6">
+        <h3 className="text-lg font-bold text-white mb-6">Warehouse Stock Levels</h3>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={stockStats}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#6B7280'}} />
-              <YAxis axisLine={false} tickLine={false} tick={{fill: '#6B7280'}} />
-              <Tooltip 
-                 cursor={{fill: 'transparent'}}
-                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
+              <XAxis 
+                dataKey="name" 
+                axisLine={false} 
+                tickLine={false} 
+                tick={{fill: '#94a3b8', fontSize: 10}} 
+                interval={0}
+                angle={-45}
+                textAnchor="end"
+                height={60}
               />
-              <Bar dataKey="totalStock" fill="#82ca9d" radius={[8, 8, 0, 0]} name="Total Units" barSize={60} />
+              <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
+              <Tooltip 
+                 cursor={{fill: 'rgba(255,255,255,0.05)'}}
+                 contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
+              />
+              <Bar dataKey="totalStock" fill="#10b981" radius={[4, 4, 0, 0]} name="Total Units" barSize={40} />
             </BarChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      </GlassCard>
     </div>
   );
 }
