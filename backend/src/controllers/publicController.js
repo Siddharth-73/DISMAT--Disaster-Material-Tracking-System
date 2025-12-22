@@ -1,4 +1,3 @@
-import ActivityLog from "../models/ActivityLog.js";
 import EmergencyReport from "../models/EmergencyReport.js";
 import Dispatch from "../models/Dispatch.js";
 import Material from "../models/Material.js";
@@ -24,15 +23,7 @@ export const getStats = async (req, res) => {
   }
 };
 
-// GET RECENT ACTIVITY LOGS
-export const getLogs = async (req, res) => {
-  try {
-    const logs = await ActivityLog.find().sort({ createdAt: -1 }).limit(10);
-    res.json(logs);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching logs" });
-  }
-};
+
 
 // SUBMIT EMERGENCY REPORT
 export const submitEmergencyReport = async (req, res) => {
