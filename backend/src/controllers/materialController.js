@@ -16,6 +16,17 @@ export const logReceipt = async (req, res) => {
       return res.status(400).json({ message: "quantity must be > 0" });
     }
 
+    // 🔒 Enforce Warehouse Access Logic
+    if (req.user.role === "warehouse") {
+      const { default: User } = await import("../models/User.js"); 
+      const userDoc = await User.findById(req.user.id);
+      
+      const assigned = userDoc.warehouses.map(id => id.toString());
+      if (!assigned.includes(warehouse)) {
+        return res.status(403).json({ message: "You are not authorized to receive into this warehouse" });
+      }
+    }
+
     let material = await Material.findOne({ name, warehouse });
 
     const receiptEntry = {

@@ -5,12 +5,20 @@ import {
   createRequest,
   getRequests,
   approveRequest,
-  rejectRequest
+  rejectRequest,
+  getEmergencyReports
 } from "../controllers/requestController.js";
 
 const router = express.Router();
 
 router.use(auth);
+
+// Public Reports (Admin only) - Must come before /:id routes if any, or just for clarity
+router.get(
+  "/emergency",
+  allowRoles("admin", "superadmin"), 
+  getEmergencyReports
+);
 
 // Create a request → NGO or Fieldworker
 router.post(

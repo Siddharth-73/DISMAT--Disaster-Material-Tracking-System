@@ -3,9 +3,11 @@
 import { useState } from "react"
 import api from "../api/axios"
 import { useNavigate } from "react-router-dom"
+import { useAuth } from "../context/AuthContext"
 
 const Login = () => {
   const navigate = useNavigate()
+  const { login } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
@@ -21,9 +23,8 @@ const Login = () => {
 
       const { token, user } = res.data
 
-      // Save auth data
-      localStorage.setItem("token", token)
-      localStorage.setItem("user", JSON.stringify(user))
+      // Use context login action
+      login(user, token)
 
       // Pending users
       if (user.status === "pending") {
@@ -117,9 +118,19 @@ const Login = () => {
 
             {/* Password Input */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
+              <div className="flex justify-between mb-2">
+                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                    Password
+                 </label>
+                 <button 
+                  type="button" 
+                  onClick={() => navigate('/forgot-password')} 
+                  className="text-sm font-semibold hover:underline"
+                  style={{ color: "#003049" }}
+                 >
+                    Forgot Password?
+                 </button>
+              </div>
               <input
                 type="password"
                 id="password"

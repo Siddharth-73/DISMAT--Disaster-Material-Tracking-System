@@ -52,7 +52,6 @@ export const createZone = async (req, res) => {
     const zone = await DisasterZone.create(zoneData);
 
     return res.status(201).json({
-      message: "Disaster zone created",
       zone,
     });
   } catch (error) {
@@ -60,6 +59,18 @@ export const createZone = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+
+// GET all zones (SuperAdmin) - includes inactive
+export const getAllZones = async (req, res) => {
+  try {
+    const zones = await DisasterZone.find({}).populate("category", "name color icon");
+    return res.json(zones);
+  } catch (error) {
+    console.error("Fetch all zones error:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 // GET public zones (India only)
 export const getPublicZones = async (req, res) => {
   try {
@@ -91,6 +102,56 @@ export const toggleZone = async (req, res) => {
     });
   } catch (error) {
     console.error("Toggle zone error:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+// UPDATE zone (SuperAdmin)
+export const updateZone = async (req, res) => {
+  try {
+    const { name, severity, description, isActive } = req.body;
+    const zone = await DisasterZone.findById(req.params.id);
+
+    if (!zone) {
+      return res.status(404).json({ message: "Zone not found" });
+    }
+
+    if (name) zone.name = name;
+    if (severity) zone.severity = severity;
+    if (description) zone.description = description;
+    if (typeof isActive === "boolean") zone.isActive = isActive;
+    
+    // Manual geometry updates
+    if (zone.source === "manual") {
+      if (req.body.center && req.body.radiusKm) {
+        zone.center = req.body.center;
+        zone.radiusKm = req.body.radiusKm;
+        zone.geometryType = "circle";
+      }
+      if (req.body.polygon) {
+        zone.polygon = { type: "Polygon", coordinates: req.body.polygon.coordinates };
+        zone.geometryType = "polygon";
+      }
+    }
+
+    await zone.save();
+    return res.json({ message: "Zone updated", zone });
+  } catch (error) {
+    console.error("Update zone error:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+// DELETE zone (SuperAdmin)
+export const deleteZone = async (req, res) => {
+  try {
+    const zone = await DisasterZone.findById(req.params.id);
+    if (!zone) return res.status(404).json({ message: "Zone not found" });
+
+    await zone.deleteOne();
+    return res.json({ message: "Zone deleted" });
+  } catch (error) {
+    console.error("Delete zone error:", error);
     return res.status(500).json({ message: "Server error" });
   }
 };

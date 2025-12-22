@@ -5,16 +5,21 @@ import { allowRoles } from "../middleware/roleMiddleware.js";
 import {
   createWarehouse,
   getWarehouses,
-  toggleWarehouseStatus
+  toggleWarehouseStatus,
+  updateWarehouse,
+  deleteWarehouse
 } from "../controllers/warehouseController.js";
 
 const router = express.Router();
 
 router.use(auth);
-router.use(allowRoles("superadmin")); 
+// Public-ish (Authenticated) - View Warehouses
+router.get("/", allowRoles("superadmin", "admin", "warehouse", "ngo", "fieldworker"), getWarehouses);
 
-router.post("/", createWarehouse);
-router.get("/", getWarehouses);
-router.patch("/toggle/:id", toggleWarehouseStatus);
+// SuperAdmin Only - Manage Warehouses
+router.post("/", allowRoles("superadmin"), createWarehouse);
+router.patch("/toggle/:id", allowRoles("superadmin"), toggleWarehouseStatus);
+router.patch("/:id", allowRoles("superadmin"), updateWarehouse);
+router.delete("/:id", allowRoles("superadmin"), deleteWarehouse);
 
 export default router;

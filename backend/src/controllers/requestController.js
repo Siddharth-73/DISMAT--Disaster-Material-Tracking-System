@@ -1,4 +1,5 @@
 import Request from "../models/Request.js";
+import EmergencyReport from "../models/EmergencyReport.js";
 
 // POST /requests (NGO or Fieldworker)
 export const createRequest = async (req, res) => {
@@ -99,6 +100,17 @@ export const rejectRequest = async (req, res) => {
     });
   } catch (error) {
     console.log("Reject Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// GET /requests/emergency (Public Reports)
+export const getEmergencyReports = async (req, res) => {
+  try {
+    const reports = await EmergencyReport.find().sort({ createdAt: -1 });
+    res.json(reports);
+  } catch (error) {
+    console.error("Get Emergency Reports Error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

@@ -13,12 +13,16 @@ const dispatchSchema = new mongoose.Schema(
     request: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Request",
-      required: true
+      required: false // Optional for manual dispatches
     },
 
     items: [dispatchItemSchema],
 
-    warehouse: { type: String, required: true },
+    warehouse: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Warehouse",
+      required: true
+    },
 
     vehicleNo: { type: String, required: true },
     driverName: { type: String },

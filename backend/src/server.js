@@ -46,9 +46,13 @@ app.use("/api/warehouses", warehouseRoutes);
 app.use("/api/disaster-categories", disasterCategoryRoutes);
 app.use("/api/disaster-zones", disasterZoneRoutes);
 
+app.use("/api/analytics", (await import("./routes/analyticsRoutes.js")).default);
+app.use("/api/users", (await import("./routes/userRoutes.js")).default);
+
 mongoose.connection.once("open", async () => {
   await syncEONET();
   await syncUSGS();
+
 });
 const PORT = process.env.PORT || 5001;
 

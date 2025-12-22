@@ -87,6 +87,11 @@ export default function LiveDisasterMap() {
           minZoom={4}
           maxZoom={8}
           scrollWheelZoom={false}
+          maxBounds={[
+            [5.0, 65.0], // South West
+            [38.0, 100.0] // North East
+          ]}
+          maxBoundsViscosity={1.0}
           style={{ height: "100%", width: "100%", borderRadius: "16px" }}
           whenReady={(map) => {
             // 🔥 Fix for hidden/partial render issues

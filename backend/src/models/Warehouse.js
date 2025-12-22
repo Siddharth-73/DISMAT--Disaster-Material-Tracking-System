@@ -40,7 +40,12 @@ const warehouseSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "DisasterZone"
       }
-    ]
+    ],
+
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    }
   },
   { timestamps: true }
 );

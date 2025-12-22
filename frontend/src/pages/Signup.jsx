@@ -39,8 +39,8 @@ export default function Signup() {
         password,
         role,
       })
-      alert("Signup request sent! Await approval from SuperAdmin.")
-      navigate("/pending")
+      alert("Signup successful! Please check your email to verify your account before logging in.")
+      navigate("/login")
     } catch (err) {
       setError(err.response?.data?.message || "Signup failed. Please try again.")
     } finally {

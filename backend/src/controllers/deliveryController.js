@@ -1,5 +1,6 @@
 import Delivery from "../models/Delivery.js";
 import Dispatch from "../models/Dispatch.js";
+import multer from "multer";
 
 export const confirmDelivery = async (req, res) => {
   try {
@@ -12,9 +13,14 @@ export const confirmDelivery = async (req, res) => {
     const dispatch = await Dispatch.findById(dispatchId);
     if (!dispatch) return res.status(404).json({ message: "Dispatch not found" });
 
-    // Ensure fieldworker owns this dispatch
-    if (dispatch.assignedTo.toString() !== req.user.id) {
+    // Ensure fieldworker owns this dispatch OR claim it if unassigned
+    if (dispatch.assignedTo && dispatch.assignedTo.toString() !== req.user.id) {
       return res.status(403).json({ message: "Not your dispatch to confirm" });
+    }
+    
+    // Auto-assign if not assigned
+    if (!dispatch.assignedTo) {
+        dispatch.assignedTo = req.user.id;
     }
 
     // Handle uploaded files

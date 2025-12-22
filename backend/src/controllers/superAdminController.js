@@ -114,3 +114,35 @@ export const updateUserRole = async (req, res) => {
 
   res.json({ message: "User role updated", user });
 };
+
+
+
+/**
+ * 8️⃣ Assign warehouses to user
+ */
+export const assignWarehouses = async (req, res) => {
+  try {
+    const { warehouses } = req.body; // Array of Warehouse IDs
+
+    if (!Array.isArray(warehouses)) {
+      return res.status(400).json({ message: "Warehouses must be an array" });
+    }
+
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Ensure user has warehouse role (optional strictly, but good practice)
+    if (user.role !== "warehouse" && user.role !== "admin") {
+      // Allow admin to theoretically oversee specific warehouses too?
+      // For now, let's just warn or allow it. User asked for "Warehouse Admins are assigned"
+    }
+
+    user.warehouses = warehouses;
+    await user.save();
+
+    res.json({ message: "Warehouses assigned successfully", user });
+  } catch (error) {
+    console.error("Assign Warehouse Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

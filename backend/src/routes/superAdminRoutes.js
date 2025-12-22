@@ -10,7 +10,8 @@ import {
   getAllUsers,
   blockUser,
   unblockUser,
-  updateUserRole
+  updateUserRole,
+  assignWarehouses
 } from "../controllers/superAdminController.js";
 
 const router = express.Router();
@@ -22,6 +23,7 @@ router.use(allowRoles("superadmin"));
 router.get("/pending-users", getPendingUsers);
 router.get("/users", getAllUsers);
 
+
 router.patch("/approve/:id", protectRootSuperAdmin, approveUser);
 router.patch("/reject/:id", protectRootSuperAdmin, rejectUser);
 
@@ -29,5 +31,6 @@ router.patch("/block/:id", protectRootSuperAdmin, blockUser);
 router.patch("/unblock/:id", protectRootSuperAdmin, unblockUser);
 
 router.patch("/role/:id", protectRootSuperAdmin, updateUserRole);
+router.patch("/assign-warehouses/:id", protectRootSuperAdmin, assignWarehouses);
 
 export default router;

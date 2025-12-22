@@ -39,12 +39,32 @@ const userSchema = new mongoose.Schema(
       default: null
     },
 
+    // Assigned Warehouses (for role: "warehouse")
+    warehouses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Warehouse"
+      }
+    ],
+
     // Approval & access control
     status: {
       type: String,
-      enum: ["pending", "active", "blocked"],
+      enum: ["pending", "active", "blocked", "rejected"],
       default: "pending"
     },
+    
+    // Email Verification
+    emailVerified: {
+      type: Boolean,
+      default: false
+    },
+    emailVerificationToken: String,
+    emailVerificationExpires: Date,
+
+    // Password Reset
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
 
     // Root superadmin protection
     isRootSuperAdmin: {
