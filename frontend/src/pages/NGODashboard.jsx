@@ -60,7 +60,7 @@ export default function NGODashboard() {
   const myRequests = data.requests || []
   // Filter dispatches related to my requests
   const myDispatches = data.dispatches.filter(d => 
-      myRequests.some(r => r._id === (d.request._id || d.request)) 
+      d.request && myRequests.some(r => r._id === (d.request._id || d.request)) 
   )
 
   return (
