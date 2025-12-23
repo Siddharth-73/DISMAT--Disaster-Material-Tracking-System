@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5001/api",
+  baseURL: "https://dismat-disaster-material-tracking-system.onrender.com/api",
 });
 
 // Request interceptor → token attach
@@ -17,7 +17,6 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Ignore 401 from login page (invalid credentials should not reload page)
     if (error.response && error.response.status === 401 && !error.config.url.includes("/auth/login")) {
       sessionStorage.removeItem("token");
       sessionStorage.removeItem("user");
